@@ -151,7 +151,7 @@ WebGIS ini telah diaudit dan disempurnakan berdasarkan standar modern:
 
 ## 👤 Pengembang & Penghargaan
 
-- **Mahasiswa / Pengembang**: [Muh. Aidil Ilham](https://aidilham21.github.io/CV-aidil/)
+- **Mahasiswa / Pengembang**: [Muh. Aidil Ilham (@aidilham21)](https://github.com/aidilham21)
 - **Dosen Pengampu**: Affan Ray Mahardika
 - **Mata Kuliah**: Sistem Informasi Geografis (SIG)
 - **Sumber Data Spasial**:
