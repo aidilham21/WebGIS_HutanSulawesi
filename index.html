@@ -1,11 +1,20 @@
 <!doctype html>
-<html lang="en">
+<html lang="id">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="description" content="WebGIS Peta Kawasan Hutan Kabupaten Pasangkayu, Provinsi Sulawesi Barat berdasarkan SK Menhut No. 862/Menhut-II/2014.">
+        <meta name="author" content="Muh. Aidil Ilham">
+        <meta name="theme-color" content="#0d2818">
+        <meta http-equiv="X-Content-Type-Options" content="nosniff">
+        <meta name="referrer" content="strict-origin-when-cross-origin">
+
+        <title>Peta Kawasan Hutan - Kabupaten Pasangkayu | WebGIS</title>
+
+        <!-- Leaflet & Plugins Stylesheets -->
         <link rel="stylesheet" href="css/leaflet.css">
         <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
         <link rel="stylesheet" href="css/L.Control.Locate.min.css">
@@ -13,311 +22,805 @@
         <link rel="stylesheet" href="css/fontawesome-all.min.css">
         <link rel="stylesheet" href="css/leaflet.photon.css">
         <link rel="stylesheet" href="css/leaflet-measure.css">
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-        <style>
-        html, body {
-            width: 100%;
-            height: 100%;
-            padding: 0;
-            margin: 0;
-            font-family: 'Poppins', sans-serif;
-            background-color: #f0f2f5;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-        #header {
-            min-height: 60px;
-            background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%);
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            z-index: 2000;
-            position: relative;
-            flex-shrink: 0;
-        }
-        .header-brand {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        .header-logo {
-            height: 45px;
-            width: auto;
-        }
-        .header-title {
-            display: flex;
-            flex-direction: column;
-        }
-        .header-title .sub-title {
-            font-size: 15px;
-            font-weight: 500;
-            line-height: 1.1;
-        }
-        .header-title h1 {
-            margin: 0;
-            font-size: 22px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            line-height: 1.1;
-        }
-        #about-btn, #legend-btn, #profile-btn {
-            background-color: #f8f9fa;
-            color: #1e3c72;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: background-color 0.3s ease;
-            text-decoration: none;
-            font-family: inherit;
-            font-size: 14px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        #about-btn:hover, #legend-btn:hover, #profile-btn:hover {
-            background-color: #e2e6ea;
-        }
-        #header-buttons {
-            display: flex;
-            gap: 10px; /* Space between buttons */
-        }
-        #map {
-            width: 100%;
-            flex-grow: 1;
-            padding: 0;
-            margin: 0;
-        }
-        /* Customizing Leaflet Controls */
-        .leaflet-control-layers, .leaflet-bar, .leaflet-control-measure, .leaflet-control-search {
-            border: none !important;
-            border-radius: 5px !important;
-            box-shadow: none !important;
-        }
-        .leaflet-control-layers {
-            box-shadow: 0 2px 5px rgba(0,0,0,0.15) !important;
-        }
-        /* Unified button style for all controls */
-        .leaflet-bar a, 
-        .leaflet-control-measure-toggle, 
-        .gcd-gl-btn {
-            width: 34px !important;
-            height: 34px !important;
-            line-height: 34px !important;
-            display: flex !important;
-            align-items: center;
-            justify-content: center;
-            background-color: #fff !important;
-            color: #444 !important;
-            border-bottom: 1px solid #eee !important;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.15) !important;
-            border-radius: 5px !important;
-            font-size: 16px !important;
-            text-decoration: none !important;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-indent: 0 !important; /* Fix for measure control */
-            background-image: none !important; /* Fix for measure control */
-        }
-        .leaflet-bar a:hover, 
-        .leaflet-control-measure-toggle:hover, 
-        .gcd-gl-btn:hover {
-            background-color: #f4f4f4 !important;
-            color: #1e3c72 !important;
-        }
-        /* Fix grouping for zoom control */
-        .leaflet-bar a {
-            border-radius: 0 !important;
-            box-shadow: none !important;
-        }
-        .leaflet-bar a:first-child {
-            border-top-left-radius: 5px !important;
-            border-top-right-radius: 5px !important;
-        }
-        .leaflet-bar a:last-child {
-            border-bottom-left-radius: 5px !important;
-            border-bottom-right-radius: 5px !important;
-            border-bottom: none !important;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.15) !important;
-        }
-        /* Popup Styling */
-        .leaflet-popup-content-wrapper {
-            border-radius: 12px !important;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2) !important;
-            padding: 5px !important;
-        }
-        .leaflet-popup-content {
-            margin: 10px 15px !important;
-            font-size: 14px;
-            line-height: 1.6;
-            max-height: 300px !important;
-            min-width: 200px;
-            overflow: auto !important;
-        }
-        .leaflet-popup-tip {
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2) !important;
-        }
-        /* Modal Styles */
-        .modal {
-            display: none; /* Hidden by default */
-            position: fixed; /* Stay in place */
-            z-index: 3000; /* Sit on top */
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgba(0,0,0,0.5); /* Black w/ opacity */
-        }
-        .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto;
-            padding: 25px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 500px;
-            border-radius: 10px;
-            position: relative;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            animation: animatetop 0.4s;
-        }
-        /* Add Animation */
-        @keyframes animatetop {
-            from {top: -300px; opacity: 0}
-            to {top: 0; opacity: 1}
-        }
-        .close-btn {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-        .close-btn:hover,
-        .close-btn:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .modal-content h2 {
-            margin-top: 0;
-            color: #2a5298;
-        }
-        .modal-content p, .modal-content ul {
-            font-size: 15px;
-            line-height: 1.7;
-        }
-        .modal-content ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        .modal-content ul li {
-            margin-bottom: 10px;
-        }
-        #legend-modal {
-            overflow: hidden;
-        }
-        #legend-modal .modal-content img {
-            max-width: 100%;
-            height: auto;
-            max-height: 60vh;
-            object-fit: contain;
-        }
-        #legend-modal .modal-content {
-            text-align: center;
-            margin: 5% auto;
-            overflow: hidden;
-        }
-        #about-modal, #about-modal .modal-content {
-            overflow: hidden;
-        }
-        .download-btn {
-            display: inline-block;
-            margin-top: 15px;
-            padding: 10px 20px;
-            background-color: #1e3c72;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: 500;
-            transition: background-color 0.3s ease;
-        }
-        .download-btn:hover {
-            background-color: #2a5298;
-        }
-        /* Search Input Styling */
-        .photon-input {
-            height: 34px !important;
-            border: none !important;
-            border-radius: 0 5px 5px 0 !important;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.15) !important;
-            padding: 0 12px !important;
-            font-family: 'Poppins', sans-serif;
-            font-size: 14px;
-            outline: none;
-            width: 220px !important;
-        }
-        .leaflet-control-search.active .gcd-gl-btn {
-            border-top-right-radius: 0 !important;
-            border-bottom-right-radius: 0 !important;
-        }
 
-        /* Responsive Styles */
-        @media (max-width: 768px) {
-            #header {
+        <!-- Google Fonts: Poppins -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+        <style>
+            :root {
+                --brand-dark: #0b2014;
+                --brand-primary: #153e28;
+                --brand-secondary: #2d6a4f;
+                --brand-accent: #52b788;
+                --brand-light: #d8f3dc;
+                --text-main: #1f2937;
+                --text-muted: #64748b;
+                --bg-canvas: #f8fafc;
+                --shadow-soft: 0 4px 14px rgba(11, 32, 20, 0.12);
+                --shadow-elevated: 0 10px 25px -5px rgba(11, 32, 20, 0.25), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+                --radius-md: 8px;
+                --radius-lg: 14px;
+                --transition-smooth: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            }
+
+            *, *::before, *::after {
+                box-sizing: border-box;
+            }
+
+            html, body {
+                width: 100%;
+                height: 100%;
+                padding: 0;
+                margin: 0;
+                font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+                background-color: var(--bg-canvas);
+                display: flex;
                 flex-direction: column;
-                padding: 10px 20px;
+                overflow: hidden;
+                color: var(--text-main);
+                -webkit-font-smoothing: antialiased;
+            }
+
+            /* Craft Floor: Custom Selection & Scrollbars */
+            ::selection {
+                background: var(--brand-secondary);
+                color: #ffffff;
+            }
+
+            ::-webkit-scrollbar {
+                width: 6px;
+                height: 6px;
+            }
+            ::-webkit-scrollbar-track {
+                background: rgba(0, 0, 0, 0.05);
+            }
+            ::-webkit-scrollbar-thumb {
+                background: var(--brand-secondary);
+                border-radius: 3px;
+            }
+            ::-webkit-scrollbar-thumb:hover {
+                background: var(--brand-primary);
+            }
+
+            /* Header Section */
+            #header {
+                min-height: 64px;
+                background: linear-gradient(135deg, #091a10 0%, #123321 60%, #1b4d32 100%);
+                color: #ffffff;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0 24px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+                z-index: 2000;
+                position: relative;
+                flex-shrink: 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .header-brand {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+            }
+
+            .header-logo-container {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 48px;
+                height: 48px;
+                background: rgba(255, 255, 255, 0.08);
+                border-radius: var(--radius-md);
+                padding: 4px;
+                border: 1px solid rgba(255, 255, 255, 0.15);
+            }
+
+            .header-logo {
+                height: 100%;
+                width: auto;
+                object-fit: contain;
+                filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+            }
+
+            .header-title {
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
+            }
+
+            .header-badge-row {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .header-badge {
+                font-size: 11px;
+                font-weight: 600;
+                letter-spacing: 0.5px;
+                text-transform: uppercase;
+                background: rgba(82, 183, 136, 0.2);
+                color: var(--brand-light);
+                padding: 2px 8px;
+                border-radius: 4px;
+                border: 1px solid rgba(82, 183, 136, 0.3);
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+            }
+
+            .header-title h1 {
+                margin: 0;
+                font-size: 18px;
+                font-weight: 700;
+                letter-spacing: 0.3px;
+                line-height: 1.2;
+                color: #ffffff;
+            }
+
+            .header-title h1 .highlight {
+                color: #85e3b3;
+                font-weight: 600;
+            }
+
+            /* Header Action Buttons */
+            #header-buttons {
+                display: flex;
+                align-items: center;
                 gap: 10px;
             }
-            .header-brand {
+
+            #header-buttons .nav-btn,
+            #header-buttons a.nav-btn,
+            #header-buttons button.nav-btn {
+                background: rgba(255, 255, 255, 0.14) !important;
+                color: #ffffff !important;
+                border: 1px solid rgba(255, 255, 255, 0.35) !important;
+                padding: 8px 16px;
+                border-radius: var(--radius-md);
+                cursor: pointer;
+                font-weight: 500;
+                transition: var(--transition-smooth);
+                text-decoration: none !important;
+                font-family: inherit;
+                font-size: 13.5px;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                backdrop-filter: blur(8px);
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            }
+
+            #header-buttons .nav-btn:link,
+            #header-buttons .nav-btn:visited,
+            #header-buttons a.nav-btn:link,
+            #header-buttons a.nav-btn:visited {
+                color: #ffffff !important;
+                text-decoration: none !important;
+            }
+
+            #header-buttons .nav-btn i,
+            #header-buttons a.nav-btn i,
+            #header-buttons button.nav-btn i,
+            #header-buttons .nav-btn span,
+            #header-buttons a.nav-btn span,
+            #header-buttons button.nav-btn span {
+                color: #ffffff !important;
+            }
+
+            #header-buttons .nav-btn:hover,
+            #header-buttons a.nav-btn:hover,
+            #header-buttons button.nav-btn:hover {
+                background: rgba(255, 255, 255, 0.28) !important;
+                border-color: #ffffff !important;
+                color: #ffffff !important;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+            }
+
+            #header-buttons .nav-btn:hover i,
+            #header-buttons a.nav-btn:hover i,
+            #header-buttons button.nav-btn:hover i,
+            #header-buttons .nav-btn:hover span,
+            #header-buttons a.nav-btn:hover span,
+            #header-buttons button.nav-btn:hover span {
+                color: #ffffff !important;
+            }
+
+            #header-buttons .nav-btn:active,
+            #header-buttons a.nav-btn:active,
+            #header-buttons button.nav-btn:active {
+                transform: translateY(0);
+            }
+
+            #header-buttons .nav-btn:focus-visible,
+            #header-buttons a.nav-btn:focus-visible,
+            #header-buttons button.nav-btn:focus-visible {
+                outline: 2px solid var(--brand-accent);
+                outline-offset: 2px;
+            }
+
+            #header-buttons .nav-btn-accent,
+            #header-buttons button.nav-btn-accent {
+                background: #2d6a4f !important;
+                border: 1px solid #52b788 !important;
+                color: #ffffff !important;
+                box-shadow: 0 2px 8px rgba(45, 106, 79, 0.4);
+            }
+
+            #header-buttons .nav-btn-accent:hover,
+            #header-buttons button.nav-btn-accent:hover {
+                background: #3b8766 !important;
+                border-color: #74c69d !important;
+                color: #ffffff !important;
+            }
+
+            /* Map Area */
+            #map {
+                width: 100%;
+                flex-grow: 1;
+                padding: 0;
+                margin: 0;
+                background-color: #1a202c;
+            }
+
+            /* Unified Leaflet Controls */
+            .leaflet-bar, .leaflet-control-layers, .leaflet-control-measure, .leaflet-control-search {
+                border: 1px solid rgba(0, 0, 0, 0.08) !important;
+                border-radius: var(--radius-md) !important;
+                box-shadow: var(--shadow-soft) !important;
+                overflow: hidden;
+            }
+
+            .leaflet-bar a, 
+            .leaflet-control-measure-toggle, 
+            .gcd-gl-btn {
+                width: 36px !important;
+                height: 36px !important;
+                line-height: 36px !important;
+                display: flex !important;
+                align-items: center;
+                justify-content: center;
+                background-color: #ffffff !important;
+                color: var(--brand-primary) !important;
+                font-size: 15px !important;
+                border-bottom: 1px solid #f1f5f9 !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+                cursor: pointer;
+                transition: var(--transition-smooth);
+                text-indent: 0 !important;
+                background-image: none !important;
+            }
+
+            .leaflet-bar a:hover, 
+            .leaflet-control-measure-toggle:hover, 
+            .gcd-gl-btn:hover {
+                background-color: #f0fdf4 !important;
+                color: var(--brand-secondary) !important;
+            }
+
+            .leaflet-bar a:last-child {
+                border-bottom: none !important;
+            }
+
+            .leaflet-control-zoom-in {
+                font-weight: 600;
+            }
+
+            /* Layer Tree Control */
+            .leaflet-control-layers {
+                background: #ffffff !important;
+                padding: 12px 14px !important;
+                border-radius: var(--radius-md) !important;
+                max-width: 310px;
+                font-family: inherit !important;
+                font-size: 13px !important;
+            }
+
+            .tree-layer-title {
+                font-weight: 600;
+                color: var(--brand-primary);
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                margin-bottom: 4px;
+            }
+
+            .tree-legend-table {
+                margin: 4px 0 8px 12px;
+                border-collapse: collapse;
+                font-size: 11.5px;
+                color: #334155;
+            }
+
+            .tree-legend-table td {
+                padding: 2px 4px;
+                vertical-align: middle;
+            }
+
+            .legend-swatch-td {
+                width: 20px;
+                text-align: center;
+            }
+
+            .legend-swatch-td img {
+                border-radius: 2px;
+                vertical-align: middle;
+            }
+
+            /* Search (Photon) Input */
+            .photon-input {
+                height: 36px !important;
+                border: 1px solid #e2e8f0 !important;
+                border-left: none !important;
+                border-radius: 0 var(--radius-md) var(--radius-md) 0 !important;
+                box-shadow: var(--shadow-soft) !important;
+                padding: 0 14px !important;
+                font-family: inherit !important;
+                font-size: 13px !important;
+                outline: none;
+                width: 240px !important;
+                background-color: #ffffff;
+                color: var(--text-main);
+                transition: var(--transition-smooth);
+            }
+
+            .photon-input:focus {
+                border-color: var(--brand-accent) !important;
+            }
+
+            /* Modern Popup Card */
+            .leaflet-popup-content-wrapper {
+                border-radius: var(--radius-lg) !important;
+                box-shadow: var(--shadow-elevated) !important;
+                padding: 0 !important;
+                overflow: hidden;
+            }
+
+            .leaflet-popup-content {
+                margin: 0 !important;
+                line-height: 1.5;
+                font-family: inherit !important;
+            }
+
+            .custom-popup-card {
+                width: 280px;
+                background: #ffffff;
+                overflow: hidden;
+            }
+
+            .popup-card-header {
+                padding: 12px 16px;
+                color: #ffffff;
+                display: flex;
                 flex-direction: column;
+                gap: 4px;
+            }
+
+            .popup-chip {
+                font-size: 11px;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                background: rgba(0, 0, 0, 0.25);
+                padding: 2px 8px;
+                border-radius: 4px;
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+                align-self: flex-start;
+            }
+
+            .popup-title {
+                margin: 2px 0 0 0;
+                font-size: 15px;
+                font-weight: 700;
+                line-height: 1.2;
+            }
+
+            .popup-location {
+                font-size: 12px;
+                opacity: 0.9;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+            }
+
+            .popup-card-body {
+                padding: 14px 16px;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                background: #ffffff;
+                font-size: 12.5px;
+            }
+
+            .popup-row {
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
+            }
+
+            .popup-label {
+                font-size: 11px;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.4px;
+                color: var(--text-muted);
+                display: flex;
+                align-items: center;
                 gap: 5px;
             }
-            .header-title {
+
+            .popup-val {
+                font-size: 13px;
+                font-weight: 500;
+                color: var(--text-main);
+            }
+
+            .highlight-val {
+                color: var(--brand-secondary);
+                font-weight: 700;
+            }
+
+            .muted-val {
+                font-size: 12px;
+                color: #475569;
+                line-height: 1.4;
+            }
+
+            .remark-row {
+                border-top: 1px dashed #e2e8f0;
+                padding-top: 8px;
+            }
+
+            /* Tooltip Pill on Map */
+            .map-badge-tooltip {
+                background: rgba(255, 255, 255, 0.94);
+                backdrop-filter: blur(4px);
+                border: 1px solid rgba(0, 0, 0, 0.1);
+                border-radius: 4px;
+                padding: 2px 8px;
+                font-size: 11px;
+                font-weight: 600;
+                color: var(--brand-primary);
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+                white-space: nowrap;
+            }
+
+            .leaflet-tooltip {
+                background: transparent !important;
+                border: none !important;
+                box-shadow: none !important;
+            }
+            .leaflet-tooltip:before {
+                display: none !important;
+            }
+
+            /* Modals (Accessible Glassmorphic Dialogs) */
+            .modal {
+                display: none;
+                position: fixed;
+                inset: 0;
+                z-index: 3000;
+                background-color: rgba(9, 26, 16, 0.65);
+                backdrop-filter: blur(6px);
                 align-items: center;
-                text-align: center;
-                width: 100%;
-            }
-            #header-buttons {
-                width: 100%;
                 justify-content: center;
+                padding: 20px;
+                opacity: 0;
+                transition: opacity 0.25s ease;
             }
-            #about-btn, #legend-btn {
-                flex: 1;
-                text-align: center;
+
+            .modal.active {
+                display: flex;
+                opacity: 1;
             }
-            .photon-input {
-                width: 150px !important;
+
+            .modal-dialog {
+                background: #ffffff;
+                border-radius: var(--radius-lg);
+                width: 100%;
+                max-width: 540px;
+                max-height: 90vh;
+                display: flex;
+                flex-direction: column;
+                box-shadow: var(--shadow-elevated);
+                overflow: hidden;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                animation: modalScale 0.25s cubic-bezier(0.16, 1, 0.3, 1);
             }
-            .modal-content {
-                width: 90%;
-                margin: 20% auto;
+
+            .modal-dialog-lg {
+                max-width: 780px;
             }
-        }
+
+            @keyframes modalScale {
+                from { transform: scale(0.95); opacity: 0; }
+                to { transform: scale(1); opacity: 1; }
+            }
+
+            .modal-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 16px 22px;
+                background: linear-gradient(135deg, #0d2818 0%, #1b4d32 100%);
+                color: #ffffff;
+            }
+
+            .modal-title-group {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .modal-title-group h2 {
+                margin: 0;
+                font-size: 17px;
+                font-weight: 600;
+                letter-spacing: 0.3px;
+                color: #ffffff;
+            }
+
+            .modal-icon {
+                font-size: 18px;
+                color: var(--brand-accent);
+            }
+
+            .modal-close-btn {
+                background: rgba(255, 255, 255, 0.12);
+                border: none;
+                color: #ffffff;
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                font-size: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: var(--transition-smooth);
+            }
+
+            .modal-close-btn:hover {
+                background: rgba(255, 255, 255, 0.25);
+                transform: rotate(90deg);
+            }
+
+            .modal-body {
+                padding: 22px;
+                overflow-y: auto;
+                font-size: 13.5px;
+                line-height: 1.6;
+                color: var(--text-main);
+            }
+
+            .modal-intro {
+                margin: 0 0 16px 0;
+                font-size: 14px;
+                color: #334155;
+            }
+
+            .info-card-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                gap: 12px;
+                margin-top: 14px;
+            }
+
+            .info-card {
+                background: #f8fafc;
+                border: 1px solid #e2e8f0;
+                border-radius: var(--radius-md);
+                padding: 12px 14px;
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .info-label {
+                font-size: 11px;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.4px;
+                color: var(--text-muted);
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+
+            .info-val {
+                font-size: 13.5px;
+                font-weight: 500;
+                color: var(--text-main);
+            }
+
+            .info-val a,
+            .info-val a:visited {
+                color: var(--brand-secondary);
+                text-decoration: none;
+                font-weight: 600;
+            }
+            .info-val a:hover {
+                color: #1b4d32;
+                text-decoration: underline;
+            }
+
+            /* Legend Modal Content */
+            .legend-chips-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 8px;
+                margin-bottom: 18px;
+                background: #f8fafc;
+                padding: 14px;
+                border-radius: var(--radius-md);
+                border: 1px solid #e2e8f0;
+            }
+
+            .legend-chip-item {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 12px;
+                color: #334155;
+            }
+
+            .chip-swatch {
+                width: 14px;
+                height: 14px;
+                border-radius: 3px;
+                border: 1px solid rgba(0, 0, 0, 0.2);
+                flex-shrink: 0;
+            }
+
+            .legend-image-container {
+                width: 100%;
+                background: #f1f5f9;
+                border-radius: var(--radius-md);
+                border: 1px solid #e2e8f0;
+                overflow: hidden;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 8px;
+                max-height: 52vh;
+            }
+
+            .legend-img {
+                max-width: 100%;
+                max-height: 50vh;
+                object-fit: contain;
+                border-radius: 4px;
+            }
+
+            .modal-footer {
+                padding: 14px 22px;
+                background: #f8fafc;
+                border-top: 1px solid #e2e8f0;
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                gap: 10px;
+            }
+
+            .btn-primary {
+                background: var(--brand-secondary);
+                color: #ffffff;
+                border: none;
+                padding: 9px 18px;
+                border-radius: var(--radius-md);
+                font-size: 13.5px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: var(--transition-smooth);
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                font-family: inherit;
+            }
+
+            .btn-primary:hover {
+                background: #1b4d32;
+                transform: translateY(-1px);
+            }
+
+            .btn-secondary {
+                background: #ffffff;
+                color: #475569;
+                border: 1px solid #cbd5e1;
+                padding: 9px 18px;
+                border-radius: var(--radius-md);
+                font-size: 13.5px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: var(--transition-smooth);
+                font-family: inherit;
+            }
+
+            .btn-secondary:hover {
+                background: #f1f5f9;
+                color: var(--text-main);
+            }
+
+            /* Responsive Adjustments */
+            @media (max-width: 768px) {
+                #header {
+                    padding: 8px 16px;
+                    min-height: 56px;
+                }
+                .header-logo-container {
+                    width: 38px;
+                    height: 38px;
+                }
+                .header-badge {
+                    display: none;
+                }
+                .header-title h1 {
+                    font-size: 15px;
+                }
+                .nav-btn span {
+                    display: none;
+                }
+                .nav-btn {
+                    padding: 8px 10px;
+                }
+                .photon-input {
+                    width: 160px !important;
+                }
+                .modal-dialog {
+                    max-width: 95%;
+                    max-height: 94vh;
+                }
+                .modal-body {
+                    padding: 16px;
+                }
+                .info-card-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
         </style>
-        <title>Peta Kawasan Hutan - Kabupaten Pasangkayu</title>
     </head>
     <body>
-        <div id="header">
+        <!-- Header Dashboard Bar -->
+        <header id="header">
             <div class="header-brand">
-                <img src="images/logo_west_sulawesi.png" alt="Logo Sulawesi Barat" class="header-logo">
+                <div class="header-logo-container">
+                    <img src="images/logo_west_sulawesi.png" alt="Logo Sulawesi Barat" class="header-logo">
+                </div>
                 <div class="header-title">
-                    <span class="sub-title">Peta Kawasan Hutan</span>
-                    <h1>Kabupaten Pasangkayu</h1>
+                    <div class="header-badge-row">
+                        <span class="header-badge"><i class="fas fa-tree"></i> WebGIS Kehutanan</span>
+                    </div>
+                    <h1>Peta Kawasan Hutan <span class="highlight">Kab. Pasangkayu</span></h1>
                 </div>
             </div>
-            <div id="header-buttons">
-                <a href="https://aidilham21.github.io/CV-aidil/" target="_blank" id="profile-btn"><i class="fas fa-user"></i> Profil</a>
-                <button id="legend-btn"><i class="fas fa-map"></i> Legenda</button>
-                <button id="about-btn"><i class="fas fa-info-circle"></i> Tentang</button>
-            </div>
-        </div>
-        <div id="map">
-        </div>
+            <nav id="header-buttons">
+                <a href="https://aidilham21.github.io/CV-aidil/" target="_blank" rel="noopener noreferrer" class="nav-btn" title="Lihat Profil Pembuat">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Profil</span>
+                </a>
+                <button id="legend-btn" class="nav-btn nav-btn-accent" title="Buka Legenda Kawasan Hutan">
+                    <i class="fas fa-layer-group"></i>
+                    <span>Legenda</span>
+                </button>
+                <button id="about-btn" class="nav-btn" title="Informasi Mengenai Website Ini">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Tentang</span>
+                </button>
+            </nav>
+        </header>
+
+        <!-- Leaflet Map Container -->
+        <main id="map" role="application" aria-label="Peta Interaktif Kawasan Hutan Kabupaten Pasangkayu"></main>
+
+        <!-- GeoJSON Data Files -->
         <script src="js/qgis2web_expressions.js"></script>
         <script src="js/leaflet.js"></script>
         <script src="js/L.Control.Layers.Tree.min.js"></script>
@@ -333,28 +836,66 @@
         <script src="js/leaflet-measure.js"></script>
         <script src="data/Clipped_1.js"></script>
         <script src="data/Dissolved_2.js"></script>
+
         <script>
-        var map = L.map('map', {
-            zoomControl:false, maxZoom:28, minZoom:1
-        })
-        var hash = new L.Hash(map);
-        map.attributionControl.setPrefix('Hak Cipta &copy; <a href="https://aidilham21.github.io/CV-aidil/" target="_blank">Muh. Aidil Ilham</a>');
-        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
-        // remove popup's row if "visible-with-data"
-        function removeEmptyRowsFromPopupContent(content, feature) {
-         var tempDiv = document.createElement('div');
-         tempDiv.innerHTML = content;
-         var rows = tempDiv.querySelectorAll('tr');
-         for (var i = 0; i < rows.length; i++) {
-             var td = rows[i].querySelector('td.visible-with-data');
-             var key = td ? td.id : '';
-             if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
-                 rows[i].parentNode.removeChild(rows[i]);
-             }
-         }
-         return tempDiv.innerHTML;
+        // Security Utility: Escape HTML to defend against DOM-XSS (OWASP A03)
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
         }
-        // modify popup if contains media
+
+        // Formatting Helpers for Human-Readable Map Popups
+        function getForestCategoryColor(category) {
+            switch(String(category)) {
+                case 'Areal Penggunaan Lain': return '#ff7f00';
+                case 'Hutan Lindung': return '#2d6a4f';
+                case 'Hutan Produksi': return '#1b5e20';
+                case 'Hutan Produksi Konversi': return '#29d53a';
+                case 'Hutan Produksi Terbatas': return '#7f8c00';
+                case 'Laut / Sungai / Badan Air': return '#1f78b4';
+                case 'Taman Nasional': return '#00838f';
+                default: return '#2d6a4f';
+            }
+        }
+
+        function formatDateIndo(dateStr) {
+            if (!dateStr || dateStr === '-') return '-';
+            var parts = String(dateStr).split(' ')[0].split(/[\/-]/);
+            if (parts.length === 3) {
+                var year = parts[0];
+                var month = parseInt(parts[1], 10);
+                var day = parseInt(parts[2], 10);
+                var months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+                if (month >= 1 && month <= 12) {
+                    return day + ' ' + months[month - 1] + ' ' + year;
+                }
+            }
+            return escapeHtml(dateStr);
+        }
+
+        function formatAreaHectares(val) {
+            if (val === null || val === undefined || val === '-' || val === '') return '-';
+            var num = parseFloat(val);
+            if (isNaN(num) || num <= 0) return '-';
+            return num.toLocaleString('id-ID') + ' Ha';
+        }
+
+        // Map Initialization
+        var map = L.map('map', {
+            zoomControl: false, 
+            maxZoom: 28, 
+            minZoom: 1
+        });
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('Hak Cipta &copy; <a href="https://aidilham21.github.io/CV-aidil/" target="_blank" rel="noopener noreferrer">Muh. Aidil Ilham</a> &middot; <a href="https://leafletjs.com" target="_blank" rel="noopener noreferrer">Leaflet</a>');
+        
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+
         function addClassToPopupIfMedia(content, popup) {
             var tempDiv = document.createElement('div');
             tempDiv.innerHTML = content;
@@ -363,48 +904,15 @@
                 var src = imgTd.getAttribute('src');
                 if (/\.(jpg|jpeg|png|gif|bmp|webp|avif)$/i.test(src)) {
                     popup._contentNode.classList.add('media');
-                    setTimeout(function() {
-                        popup.update();
-                    }, 10);
-                } else if (/\.(mp3|wav|ogg|aac)$/i.test(src)) {
-                    var audio = document.createElement('audio');
-                    audio.controls = true;
-                    audio.src = src;
-                    imgTd.parentNode.replaceChild(audio, imgTd);
-                    popup._contentNode.classList.add('media');
-                    setTimeout(function() {
-                        popup.setContent(tempDiv.innerHTML);
-                        popup.update();
-                    }, 10);
-                } else if (/\.(mp4|webm|ogg|mov)$/i.test(src)) {
-                    var video = document.createElement('video');
-                    video.controls = true;
-                    video.src = src;
-                    video.style.width = "400px";
-                    video.style.height = "300px";
-                    video.style.maxHeight = "60vh";
-                    video.style.maxWidth = "60vw";
-                    imgTd.parentNode.replaceChild(video, imgTd);
-                    popup._contentNode.classList.add('media');
-                    // Aggiorna il popup quando il video carica i metadati
-                    video.addEventListener('loadedmetadata', function() {
-                        popup.update();
-                    });
-                    setTimeout(function() {
-                        popup.setContent(tempDiv.innerHTML);
-                        popup.update();
-                    }, 10);
-                } else {
-                    popup._contentNode.classList.remove('media');
+                    setTimeout(function() { popup.update(); }, 10);
                 }
-            } else {
-                popup._contentNode.classList.remove('media');
             }
         }
-        var zoomControl = L.control.zoom({
-            position: 'topleft'
-        }).addTo(map);
-        L.control.locate({locateOptions: {maxZoom: 19}}).addTo(map);
+
+        // Unified Navigation Controls
+        var zoomControl = L.control.zoom({ position: 'topleft' }).addTo(map);
+        L.control.locate({ locateOptions: { maxZoom: 19 } }).addTo(map);
+
         var measureControl = new L.Control.Measure({
             position: 'topleft',
             primaryLengthUnit: 'meters',
@@ -413,8 +921,14 @@
             secondaryAreaUnit: 'hectares'
         });
         measureControl.addTo(map);
-        document.getElementsByClassName('leaflet-control-measure-toggle')[0].innerHTML = '';
-        document.getElementsByClassName('leaflet-control-measure-toggle')[0].className += ' fas fa-ruler';
+        
+        var measureToggleEl = document.querySelector('.leaflet-control-measure-toggle');
+        if (measureToggleEl) {
+            measureToggleEl.innerHTML = '';
+            measureToggleEl.className += ' fas fa-ruler-combined';
+            measureToggleEl.title = 'Ukur Jarak & Luas';
+        }
+
         var bounds_group = new L.featureGroup([]);
         function setBounds() {
             if (bounds_group.getLayers().length) {
@@ -423,202 +937,89 @@
             map.setMaxBounds(map.getBounds());
             map.setMinZoom(map.getZoom());
         }
+
+        // Google Maps Satellite Base Layer
         map.createPane('pane_GoogleMaps_0');
         map.getPane('pane_GoogleMaps_0').style.zIndex = 400;
         var layer_GoogleMaps_0 = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
             pane: 'pane_GoogleMaps_0',
             opacity: 1.0,
-            attribution: '',
+            attribution: '&copy; Google Satellite',
             minZoom: 1,
             maxZoom: 28,
             minNativeZoom: 0,
             maxNativeZoom: 18
         });
-        layer_GoogleMaps_0;
         map.addLayer(layer_GoogleMaps_0);
+
+        // Layer: Clipped_1 (Kabupaten Pasangkayu)
         function pop_Clipped_1(feature, layer) {
-            var popupContent = '<table>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['OBJECTID'] !== null ? autolinker.link(String(feature.properties['OBJECTID']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['fid'] !== null ? autolinker.link(String(feature.properties['fid']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['fcode'] !== null ? autolinker.link(String(feature.properties['fcode']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['metadata'] !== null ? autolinker.link(String(feature.properties['metadata']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['srs_id'] !== null ? autolinker.link(String(feature.properties['srs_id']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['namobj'] !== null ? autolinker.link(String(feature.properties['namobj']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['remark'] !== null ? autolinker.link(String(feature.properties['remark']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['no_reg'] !== null ? autolinker.link(String(feature.properties['no_reg']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['kode_prov'] !== null ? autolinker.link(String(feature.properties['kode_prov']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['fungsikws'] !== null ? autolinker.link(String(feature.properties['fungsikws']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['noskkws'] !== null ? autolinker.link(String(feature.properties['noskkws']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['tglskkws'] !== null ? autolinker.link(String(feature.properties['tglskkws']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['lskkws'] !== null ? autolinker.link(String(feature.properties['lskkws']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['st_area_sh'] !== null ? autolinker.link(String(feature.properties['st_area_sh']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['st_length_'] !== null ? autolinker.link(String(feature.properties['st_length_']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <th scope="row">Keterangan</th>\
-                        <td>' + (feature.properties['Keterangan'] !== null ? autolinker.link(String(feature.properties['Keterangan']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                </table>';
-            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
-			layer.on('popupopen', function(e) {
-				addClassToPopupIfMedia(content, e.popup);
-			});
-			layer.bindPopup(content, { maxHeight: 400 });
+            var p = feature.properties || {};
+            var category = p['Keterangan'] || 'Kawasan Hutan';
+            var headerColor = getForestCategoryColor(category);
+            var nosk = p['noskkws'] || '-';
+            var tglsk = formatDateIndo(p['tglskkws']);
+            var luas = formatAreaHectares(p['lskkws']);
+            var remark = p['remark'] || '-';
+
+            var popupContent = '<div class="custom-popup-card">' +
+                '<div class="popup-card-header" style="background: ' + headerColor + ';">' +
+                    '<span class="popup-chip"><i class="fas fa-tree"></i> ' + escapeHtml(category) + '</span>' +
+                    '<h3 class="popup-title">Kabupaten Pasangkayu</h3>' +
+                    '<div class="popup-location"><i class="fas fa-map-marker-alt"></i> Provinsi Sulawesi Barat</div>' +
+                '</div>' +
+                '<div class="popup-card-body">' +
+                    '<div class="popup-row">' +
+                        '<span class="popup-label"><i class="fas fa-file-contract"></i> Dasar Hukum SK</span>' +
+                        '<span class="popup-val">No. ' + escapeHtml(nosk) + '</span>' +
+                    '</div>' +
+                    '<div class="popup-row">' +
+                        '<span class="popup-label"><i class="fas fa-calendar-alt"></i> Tanggal Penetapan</span>' +
+                        '<span class="popup-val">' + tglsk + '</span>' +
+                    '</div>' +
+                    '<div class="popup-row">' +
+                        '<span class="popup-label"><i class="fas fa-chart-area"></i> Luas SK Kawasan</span>' +
+                        '<span class="popup-val highlight-val">' + luas + '</span>' +
+                    '</div>' +
+                    (remark !== '-' ? (
+                        '<div class="popup-row remark-row">' +
+                            '<span class="popup-label"><i class="fas fa-info-circle"></i> Catatan</span>' +
+                            '<span class="popup-val muted-val">' + escapeHtml(remark) + '</span>' +
+                        '</div>'
+                    ) : '') +
+                '</div>' +
+            '</div>';
+
+            layer.on('popupopen', function(e) { addClassToPopupIfMedia(popupContent, e.popup); });
+            layer.bindPopup(popupContent, { maxWidth: 320, minWidth: 260, className: 'custom-leaflet-popup' });
         }
 
         function style_Clipped_1_0(feature) {
+            var fillColor = 'rgba(209,35,192,0.72)';
             switch(String(feature.properties['Keterangan'])) {
-                case 'Areal Penggunaan Lain':
-                    return {
+                case 'Areal Penggunaan Lain': fillColor = 'rgba(255,127,0,0.72)'; break;
+                case 'Hutan Lindung': fillColor = 'rgba(178,223,138,0.72)'; break;
+                case 'Hutan Produksi': fillColor = 'rgba(51,160,44,0.72)'; break;
+                case 'Hutan Produksi Konversi': fillColor = 'rgba(41,213,58,0.72)'; break;
+                case 'Hutan Produksi Terbatas': fillColor = 'rgba(190,207,80,0.72)'; break;
+                case 'Laut / Sungai / Badan Air': fillColor = 'rgba(31,120,180,0.72)'; break;
+                case 'Taman Nasional': fillColor = 'rgba(43,220,193,0.72)'; break;
+            }
+            return {
                 pane: 'pane_Clipped_1',
                 opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
+                color: 'rgba(255,255,255,0.7)',
                 dashArray: '',
                 lineCap: 'butt',
                 lineJoin: 'miter',
                 weight: 1.0, 
                 fill: true,
                 fillOpacity: 1,
-                fillColor: 'rgba(255,127,0,1.0)',
+                fillColor: fillColor,
                 interactive: true,
-            }
-                    break;
-                case 'Hutan Lindung':
-                    return {
-                pane: 'pane_Clipped_1',
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0, 
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(178,223,138,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Hutan Produksi':
-                    return {
-                pane: 'pane_Clipped_1',
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0, 
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(51,160,44,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Hutan Produksi Konversi':
-                    return {
-                pane: 'pane_Clipped_1',
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0, 
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(41,213,58,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Hutan Produksi Terbatas':
-                    return {
-                pane: 'pane_Clipped_1',
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0, 
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(190,207,80,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Laut / Sungai / Badan Air':
-                    return {
-                pane: 'pane_Clipped_1',
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0, 
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(31,120,180,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Taman Nasional':
-                    return {
-                pane: 'pane_Clipped_1',
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0, 
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(43,220,193,1.0)',
-                interactive: true,
-            }
-                    break;
-                default:
-                    return {
-                pane: 'pane_Clipped_1',
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0, 
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(209,35,192,1.0)',
-                interactive: true,
-            }
-                    break;
-            }
+            };
         }
+
         map.createPane('pane_Clipped_1');
         map.getPane('pane_Clipped_1').style.zIndex = 401;
         map.getPane('pane_Clipped_1').style['mix-blend-mode'] = 'normal';
@@ -633,217 +1034,78 @@
         });
         bounds_group.addLayer(layer_Clipped_1);
         map.addLayer(layer_Clipped_1);
+
+        // Layer: Dissolved_2 (Batas Administrasi Kecamatan)
         function pop_Dissolved_2(feature, layer) {
-            var popupContent = '<table>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['OBJECTID'] !== null ? autolinker.link(String(feature.properties['OBJECTID']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['fid'] !== null ? autolinker.link(String(feature.properties['fid']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['fcode'] !== null ? autolinker.link(String(feature.properties['fcode']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['metadata'] !== null ? autolinker.link(String(feature.properties['metadata']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['srs_id'] !== null ? autolinker.link(String(feature.properties['srs_id']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['namobj'] !== null ? autolinker.link(String(feature.properties['namobj']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['remark'] !== null ? autolinker.link(String(feature.properties['remark']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['no_reg'] !== null ? autolinker.link(String(feature.properties['no_reg']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['kode_prov'] !== null ? autolinker.link(String(feature.properties['kode_prov']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['fungsikws'] !== null ? autolinker.link(String(feature.properties['fungsikws']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['noskkws'] !== null ? autolinker.link(String(feature.properties['noskkws']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['tglskkws'] !== null ? autolinker.link(String(feature.properties['tglskkws']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['lskkws'] !== null ? autolinker.link(String(feature.properties['lskkws']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['st_area_sh'] !== null ? autolinker.link(String(feature.properties['st_area_sh']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['st_length_'] !== null ? autolinker.link(String(feature.properties['st_length_']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <th scope="row">Keterangan</th>\
-                        <td>' + (feature.properties['Keterangan'] !== null ? autolinker.link(String(feature.properties['Keterangan']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['kode_kec'] !== null ? autolinker.link(String(feature.properties['kode_kec']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['kode_kk'] !== null ? autolinker.link(String(feature.properties['kode_kk']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['kode_pro'] !== null ? autolinker.link(String(feature.properties['kode_pro']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <th scope="row">kecamata</th>\
-                        <td>' + (feature.properties['kecamata'] !== null ? autolinker.link(String(feature.properties['kecamata']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['kab_kota'] !== null ? autolinker.link(String(feature.properties['kab_kota']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['provinsi'] !== null ? autolinker.link(String(feature.properties['provinsi']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['fid_2'] !== null ? autolinker.link(String(feature.properties['fid_2']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['nama'] !== null ? autolinker.link(String(feature.properties['nama']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['label'] !== null ? autolinker.link(String(feature.properties['label']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                </table>';
-            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
-			layer.on('popupopen', function(e) {
-				addClassToPopupIfMedia(content, e.popup);
-			});
-			layer.bindPopup(content, { maxHeight: 400 });
+            var p = feature.properties || {};
+            var category = p['Keterangan'] || 'Kawasan Hutan';
+            var headerColor = getForestCategoryColor(category);
+            var kec = p['kecamata'] || p['nama'] || '-';
+            var kab = p['kab_kota'] || 'Pasangkayu';
+            var prov = p['provinsi'] || 'Sulawesi Barat';
+            var nosk = p['noskkws'] || '-';
+            var tglsk = formatDateIndo(p['tglskkws']);
+            var luas = formatAreaHectares(p['lskkws']);
+            var remark = p['remark'] || '-';
+
+            var popupContent = '<div class="custom-popup-card">' +
+                '<div class="popup-card-header" style="background: ' + headerColor + ';">' +
+                    '<span class="popup-chip"><i class="fas fa-tree"></i> ' + escapeHtml(category) + '</span>' +
+                    '<h3 class="popup-title">Kecamatan ' + escapeHtml(kec) + '</h3>' +
+                    '<div class="popup-location"><i class="fas fa-map-marker-alt"></i> ' + escapeHtml(kab) + ', ' + escapeHtml(prov) + '</div>' +
+                '</div>' +
+                '<div class="popup-card-body">' +
+                    '<div class="popup-row">' +
+                        '<span class="popup-label"><i class="fas fa-file-contract"></i> Dasar Hukum SK</span>' +
+                        '<span class="popup-val">No. ' + escapeHtml(nosk) + '</span>' +
+                    '</div>' +
+                    '<div class="popup-row">' +
+                        '<span class="popup-label"><i class="fas fa-calendar-alt"></i> Tanggal Penetapan</span>' +
+                        '<span class="popup-val">' + tglsk + '</span>' +
+                    '</div>' +
+                    '<div class="popup-row">' +
+                        '<span class="popup-label"><i class="fas fa-chart-area"></i> Luas SK Kawasan</span>' +
+                        '<span class="popup-val highlight-val">' + luas + '</span>' +
+                    '</div>' +
+                    (remark !== '-' ? (
+                        '<div class="popup-row remark-row">' +
+                            '<span class="popup-label"><i class="fas fa-info-circle"></i> Catatan</span>' +
+                            '<span class="popup-val muted-val">' + escapeHtml(remark) + '</span>' +
+                        '</div>'
+                    ) : '') +
+                '</div>' +
+            '</div>';
+
+            layer.on('popupopen', function(e) { addClassToPopupIfMedia(popupContent, e.popup); });
+            layer.bindPopup(popupContent, { maxWidth: 320, minWidth: 260, className: 'custom-leaflet-popup' });
         }
 
         function style_Dissolved_2_0(feature) {
+            var fillColor = 'rgba(209,35,192,0.72)';
             switch(String(feature.properties['Keterangan'])) {
-                case 'Areal Penggunaan Lain':
-                    return {
+                case 'Areal Penggunaan Lain': fillColor = 'rgba(255,127,0,0.72)'; break;
+                case 'Hutan Lindung': fillColor = 'rgba(178,223,138,0.72)'; break;
+                case 'Hutan Produksi': fillColor = 'rgba(51,160,44,0.72)'; break;
+                case 'Hutan Produksi Konversi': fillColor = 'rgba(41,213,58,0.72)'; break;
+                case 'Hutan Produksi Terbatas': fillColor = 'rgba(190,207,80,0.72)'; break;
+                case 'Laut / Sungai / Badan Air': fillColor = 'rgba(31,120,180,0.72)'; break;
+                case 'Taman Nasional': fillColor = 'rgba(43,220,193,0.72)'; break;
+            }
+            return {
                 pane: 'pane_Dissolved_2',
                 opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
+                color: 'rgba(255,255,255,0.7)',
                 dashArray: '',
                 lineCap: 'butt',
                 lineJoin: 'miter',
                 weight: 1.0, 
                 fill: true,
                 fillOpacity: 1,
-                fillColor: 'rgba(255,127,0,1.0)',
+                fillColor: fillColor,
                 interactive: true,
-            }
-                    break;
-                case 'Hutan Lindung':
-                    return {
-                pane: 'pane_Dissolved_2',
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0, 
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(178,223,138,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Hutan Produksi':
-                    return {
-                pane: 'pane_Dissolved_2',
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0, 
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(51,160,44,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Hutan Produksi Konversi':
-                    return {
-                pane: 'pane_Dissolved_2',
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0, 
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(41,213,58,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Hutan Produksi Terbatas':
-                    return {
-                pane: 'pane_Dissolved_2',
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0, 
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(190,207,80,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Laut / Sungai / Badan Air':
-                    return {
-                pane: 'pane_Dissolved_2',
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0, 
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(31,120,180,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Taman Nasional':
-                    return {
-                pane: 'pane_Dissolved_2',
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0, 
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(43,220,193,1.0)',
-                interactive: true,
-            }
-                    break;
-                default:
-                    return {
-                pane: 'pane_Dissolved_2',
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0, 
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(209,35,192,1.0)',
-                interactive: true,
-            }
-                    break;
-            }
+            };
         }
+
         map.createPane('pane_Dissolved_2');
         map.getPane('pane_Dissolved_2').style.zIndex = 402;
         map.getPane('pane_Dissolved_2').style['mix-blend-mode'] = 'normal';
@@ -858,234 +1120,348 @@
         });
         bounds_group.addLayer(layer_Dissolved_2);
         map.addLayer(layer_Dissolved_2);
-        const url = {"Nominatim OSM": "https://nominatim.openstreetmap.org/search?format=geojson&addressdetails=1&",
-        "France BAN": "https://api-adresse.data.gouv.fr/search/?"}
+
+        // Search Control (Photon) with Security Fix & Bug Resolution
+        const url = {
+            "Nominatim OSM": "https://nominatim.openstreetmap.org/search?format=geojson&addressdetails=1&",
+            "France BAN": "https://api-adresse.data.gouv.fr/search/?"
+        };
+
         var photonControl = L.control.photon({
             url: url["Nominatim OSM"],
             feedbackLabel: '',
             position: 'topleft',
             includePosition: true,
-            initial: true,
-            // resultsHandler: myHandler,
+            initial: true
         }).addTo(map);
-        photonControl._container.childNodes[0].style.borderRadius="10px"
-        var x = null;
-        // Create a variable to store the marker
-        var marker = null;
-        // Add an event listener to the Photon control to create a marker from the returned geoJSON data
-        var z = null;
+
+        if (photonControl._container && photonControl._container.childNodes[0]) {
+            photonControl._container.childNodes[0].style.borderRadius = "8px";
+        }
+
+        var searchMarker = null;
+        var searchGeoJson = null;
+
         photonControl.on('selected', function(e) {
-            console.log(photonControl.search.resultsContainer);
-            if (x != null) {
-                map.removeLayer(obj3.marker);
-                map.removeLayer(x);
+            if (searchMarker) {
+                map.removeLayer(searchMarker);
+                searchMarker = null;
             }
-            obj2.gcd = e.choice;
-            x = L.geoJSON(obj2.gcd).addTo(map);
-            var label = typeof obj2.gcd.properties.label === 'undefined' ? obj2.gcd.properties.display_name : obj2.gcd.properties.label;
-            obj3.marker = L.marker(x.getLayers()[0].getLatLng()).bindPopup(label).addTo(map);
-            map.setView(x.getLayers()[0].getLatLng(), 17);
-            z = typeof e.choice.properties.label === 'undefined'? e.choice.properties.display_name : e.choice.properties.label;
-            console.log(e);
-            e.target.input.value = z;
-        });
-        var search = document.getElementsByClassName("leaflet-photon leaflet-control")[0];
-        search.classList.add("leaflet-control-search")
-        search.style.display = "flex";
+            if (searchGeoJson) {
+                map.removeLayer(searchGeoJson);
+                searchGeoJson = null;
+            }
+            if (!e || !e.choice) return;
 
-        // Create the new button element
-        var button = document.createElement("div");
-        button.id = "gcd-button-control";
-        button.className = "gcd-gl-btn fa fa-search search-button";
-        
-        // Prevent map click propagation
-        L.DomEvent.disableClickPropagation(button);
+            var choice = e.choice;
+            searchGeoJson = L.geoJSON(choice).addTo(map);
 
-        // Insert the button at the beginning of the search control
-        search.insertBefore(button, search.firstChild);
-        var input = search.querySelector('.photon-input');
-        input.style.display = "none";
-        L.DomEvent.disableClickPropagation(input);
+            var rawLabel = (choice.properties && (choice.properties.label || choice.properties.display_name || choice.properties.name)) ? (choice.properties.label || choice.properties.display_name || choice.properties.name) : 'Lokasi Terpilih';
+            var safeLabel = escapeHtml(rawLabel);
 
-        button.addEventListener("click", function (e) {
-            L.DomEvent.stop(e);
-            var parent = this.parentNode;
-            if (input.style.display === "none") {
-                input.style.display = "block";
-                parent.classList.add("active");
-                input.focus();
-            } else {
-                input.style.display = "none";
-                parent.classList.remove("active");
+            var latlng = null;
+            if (searchGeoJson.getLayers().length > 0 && searchGeoJson.getLayers()[0].getLatLng) {
+                latlng = searchGeoJson.getLayers()[0].getLatLng();
+            } else if (choice.geometry && choice.geometry.coordinates) {
+                latlng = L.latLng(choice.geometry.coordinates[1], choice.geometry.coordinates[0]);
+            }
+
+            if (latlng) {
+                searchMarker = L.marker(latlng).bindPopup(safeLabel).addTo(map);
+                searchMarker.openPopup();
+                map.setView(latlng, 15);
+            }
+
+            if (e.target && e.target.input) {
+                e.target.input.value = rawLabel;
             }
         });
+
+        var searchEl = document.getElementsByClassName("leaflet-photon leaflet-control")[0];
+        if (searchEl) {
+            searchEl.classList.add("leaflet-control-search");
+            searchEl.style.display = "flex";
+
+            var searchBtn = document.createElement("div");
+            searchBtn.id = "gcd-button-control";
+            searchBtn.className = "gcd-gl-btn fa fa-search search-button";
+            searchBtn.title = "Cari Lokasi";
+            
+            L.DomEvent.disableClickPropagation(searchBtn);
+            searchEl.insertBefore(searchBtn, searchEl.firstChild);
+
+            var photonInput = searchEl.querySelector('.photon-input');
+            if (photonInput) {
+                photonInput.style.display = "none";
+                photonInput.placeholder = "Cari wilayah / lokasi...";
+                L.DomEvent.disableClickPropagation(photonInput);
+
+                searchBtn.addEventListener("click", function (e) {
+                    L.DomEvent.stop(e);
+                    var parent = this.parentNode;
+                    if (photonInput.style.display === "none") {
+                        photonInput.style.display = "block";
+                        parent.classList.add("active");
+                        photonInput.focus();
+                    } else {
+                        photonInput.style.display = "none";
+                        parent.classList.remove("active");
+                    }
+                });
+            }
+        }
+
+        // Overlays Tree & Polished Legends (No Empty Geoprocessing Verbs)
         var overlaysTree = [
-            {label: 'Dissolved<br /><table><tr><td style="text-align: center;"><img src="legend/Dissolved_2_ArealPenggunaanLain0.png" /></td><td>Areal Penggunaan Lain</td></tr><tr><td style="text-align: center;"><img src="legend/Dissolved_2_HutanLindung1.png" /></td><td>Hutan Lindung</td></tr><tr><td style="text-align: center;"><img src="legend/Dissolved_2_HutanProduksi2.png" /></td><td>Hutan Produksi</td></tr><tr><td style="text-align: center;"><img src="legend/Dissolved_2_HutanProduksiKonversi3.png" /></td><td>Hutan Produksi Konversi</td></tr><tr><td style="text-align: center;"><img src="legend/Dissolved_2_HutanProduksiTerbatas4.png" /></td><td>Hutan Produksi Terbatas</td></tr><tr><td style="text-align: center;"><img src="legend/Dissolved_2_LautSungaiBadanAir5.png" /></td><td>Laut / Sungai / Badan Air</td></tr><tr><td style="text-align: center;"><img src="legend/Dissolved_2_TamanNasional6.png" /></td><td>Taman Nasional</td></tr><tr><td style="text-align: center;"><img src="legend/Dissolved_2_7.png" /></td><td></td></tr></table>', layer: layer_Dissolved_2},
-            {label: 'Clipped<br /><table><tr><td style="text-align: center;"><img src="legend/Clipped_1_ArealPenggunaanLain0.png" /></td><td>Areal Penggunaan Lain</td></tr><tr><td style="text-align: center;"><img src="legend/Clipped_1_HutanLindung1.png" /></td><td>Hutan Lindung</td></tr><tr><td style="text-align: center;"><img src="legend/Clipped_1_HutanProduksi2.png" /></td><td>Hutan Produksi</td></tr><tr><td style="text-align: center;"><img src="legend/Clipped_1_HutanProduksiKonversi3.png" /></td><td>Hutan Produksi Konversi</td></tr><tr><td style="text-align: center;"><img src="legend/Clipped_1_HutanProduksiTerbatas4.png" /></td><td>Hutan Produksi Terbatas</td></tr><tr><td style="text-align: center;"><img src="legend/Clipped_1_LautSungaiBadanAir5.png" /></td><td>Laut / Sungai / Badan Air</td></tr><tr><td style="text-align: center;"><img src="legend/Clipped_1_TamanNasional6.png" /></td><td>Taman Nasional</td></tr><tr><td style="text-align: center;"><img src="legend/Clipped_1_7.png" /></td><td></td></tr></table>', layer: layer_Clipped_1},
-            {label: "Google Maps", layer: layer_GoogleMaps_0, radioGroup: 'bm' },]
-        var lay = L.control.layers.tree(null, overlaysTree,{
-            //namedToggle: true,
-            //selectorBack: false,
-            //closedSymbol: '&#8862; &#x1f5c0;',
-            //openedSymbol: '&#8863; &#x1f5c1;',
-            //collapseAll: 'Collapse all',
-            //expandAll: 'Expand all',
+            {
+                label: '<span class="tree-layer-title"><i class="fas fa-draw-polygon"></i> Kawasan Hutan (Kecamatan)</span><br />' +
+                       '<table class="tree-legend-table">' +
+                       '<tr><td class="legend-swatch-td"><img src="legend/Dissolved_2_ArealPenggunaanLain0.png" alt="APL" /></td><td>Areal Penggunaan Lain</td></tr>' +
+                       '<tr><td class="legend-swatch-td"><img src="legend/Dissolved_2_HutanLindung1.png" alt="HL" /></td><td>Hutan Lindung</td></tr>' +
+                       '<tr><td class="legend-swatch-td"><img src="legend/Dissolved_2_HutanProduksi2.png" alt="HP" /></td><td>Hutan Produksi</td></tr>' +
+                       '<tr><td class="legend-swatch-td"><img src="legend/Dissolved_2_HutanProduksiKonversi3.png" alt="HPK" /></td><td>Hutan Produksi Konversi</td></tr>' +
+                       '<tr><td class="legend-swatch-td"><img src="legend/Dissolved_2_HutanProduksiTerbatas4.png" alt="HPT" /></td><td>Hutan Produksi Terbatas</td></tr>' +
+                       '<tr><td class="legend-swatch-td"><img src="legend/Dissolved_2_TamanNasional6.png" alt="TN" /></td><td>Taman Nasional</td></tr>' +
+                       '<tr><td class="legend-swatch-td"><img src="legend/Dissolved_2_LautSungaiBadanAir5.png" alt="Air" /></td><td>Laut / Sungai / Badan Air</td></tr>' +
+                       '</table>', 
+                layer: layer_Dissolved_2
+            },
+            {
+                label: '<span class="tree-layer-title"><i class="fas fa-layer-group"></i> Kawasan Hutan (Kabupaten)</span><br />' +
+                       '<table class="tree-legend-table">' +
+                       '<tr><td class="legend-swatch-td"><img src="legend/Clipped_1_ArealPenggunaanLain0.png" alt="APL" /></td><td>Areal Penggunaan Lain</td></tr>' +
+                       '<tr><td class="legend-swatch-td"><img src="legend/Clipped_1_HutanLindung1.png" alt="HL" /></td><td>Hutan Lindung</td></tr>' +
+                       '<tr><td class="legend-swatch-td"><img src="legend/Clipped_1_HutanProduksi2.png" alt="HP" /></td><td>Hutan Produksi</td></tr>' +
+                       '<tr><td class="legend-swatch-td"><img src="legend/Clipped_1_HutanProduksiKonversi3.png" alt="HPK" /></td><td>Hutan Produksi Konversi</td></tr>' +
+                       '<tr><td class="legend-swatch-td"><img src="legend/Clipped_1_HutanProduksiTerbatas4.png" alt="HPT" /></td><td>Hutan Produksi Terbatas</td></tr>' +
+                       '<tr><td class="legend-swatch-td"><img src="legend/Clipped_1_TamanNasional6.png" alt="TN" /></td><td>Taman Nasional</td></tr>' +
+                       '<tr><td class="legend-swatch-td"><img src="legend/Clipped_1_LautSungaiBadanAir5.png" alt="Air" /></td><td>Laut / Sungai / Badan Air</td></tr>' +
+                       '</table>', 
+                layer: layer_Clipped_1
+            },
+            {
+                label: '<span class="tree-layer-title"><i class="fas fa-satellite"></i> Google Satellite</span>', 
+                layer: layer_GoogleMaps_0, 
+                radioGroup: 'bm' 
+            }
+        ];
+
+        var lay = L.control.layers.tree(null, overlaysTree, {
             collapsed: false, 
         });
         lay.addTo(map);
-		document.addEventListener("DOMContentLoaded", function() {
-            // set new Layers List height which considers toggle icon
+
+        document.addEventListener("DOMContentLoaded", function() {
             function newLayersListHeight() {
                 var layerScrollbarElement = document.querySelector('.leaflet-control-layers-scrollbar');
                 if (layerScrollbarElement) {
                     var layersListElement = document.querySelector('.leaflet-control-layers-list');
-                    var originalHeight = layersListElement.style.height 
-                        || window.getComputedStyle(layersListElement).height;
+                    var originalHeight = layersListElement.style.height || window.getComputedStyle(layersListElement).height;
                     var newHeight = parseFloat(originalHeight) - 50;
                     layersListElement.style.height = newHeight + 'px';
                 }
             }
+
             var isLayersListExpanded = true;
             var controlLayersElement = document.querySelector('.leaflet-control-layers');
             var toggleLayerControl = document.querySelector('.leaflet-control-layers-toggle');
-            // toggle Collapsed/Expanded and apply new Layers List height
-            toggleLayerControl.addEventListener('click', function() {
-                if (isLayersListExpanded) {
-                    controlLayersElement.classList.remove('leaflet-control-layers-expanded');
-                } else {
-                    controlLayersElement.classList.add('leaflet-control-layers-expanded');
-                }
-                isLayersListExpanded = !isLayersListExpanded;
-                newLayersListHeight()
-            });	
-			// apply new Layers List height if toggle layerstree
-			if (controlLayersElement) {
-				controlLayersElement.addEventListener('click', function(event) {
-					var toggleLayerHeaderPointer = event.target.closest('.leaflet-layerstree-header-pointer span');
-					if (toggleLayerHeaderPointer) {
-						newLayersListHeight();
-					}
-				});
-			}
-            // Collapsed/Expanded at Start to apply new height
-            setTimeout(function() {
-                toggleLayerControl.click();
-            }, 10);
-            setTimeout(function() {
-                toggleLayerControl.click();
-            }, 10);
-            // Collapsed touch/small screen
-            var isSmallScreen = window.innerWidth < 650;
-            if (isSmallScreen) {
+
+            if (toggleLayerControl) {
+                toggleLayerControl.addEventListener('click', function() {
+                    if (isLayersListExpanded) {
+                        controlLayersElement.classList.remove('leaflet-control-layers-expanded');
+                    } else {
+                        controlLayersElement.classList.add('leaflet-control-layers-expanded');
+                    }
+                    isLayersListExpanded = !isLayersListExpanded;
+                    newLayersListHeight();
+                });
+            }
+
+            if (controlLayersElement) {
+                controlLayersElement.addEventListener('click', function(event) {
+                    var toggleLayerHeaderPointer = event.target.closest('.leaflet-layerstree-header-pointer span');
+                    if (toggleLayerHeaderPointer) {
+                        newLayersListHeight();
+                    }
+                });
+            }
+
+            // Adjust collapsed state on smaller screens
+            if (window.innerWidth < 768 && controlLayersElement) {
                 setTimeout(function() {
                     controlLayersElement.classList.remove('leaflet-control-layers-expanded');
-                    isLayersListExpanded = !isLayersListExpanded;
+                    isLayersListExpanded = false;
                 }, 500);
-            }  
-        });       
+            }
+        });
+
         setBounds();
+
+        // Bind sanitized tooltips for layers
         var i = 0;
         layer_Clipped_1.eachLayer(function(layer) {
-            var context = {
-                feature: layer.feature,
-                variables: {}
-            };
-            layer.bindTooltip((layer.feature.properties['Keterangan'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['Keterangan']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Clipped_1'});
+            var ket = layer.feature.properties['Keterangan'];
+            if (ket) {
+                layer.bindTooltip('<div class="map-badge-tooltip">' + escapeHtml(ket) + '</div>', {
+                    permanent: true, 
+                    offset: [0, -16], 
+                    className: 'css_Clipped_1'
+                });
+            }
             labels.push(layer);
             totalMarkers += 1;
-              layer.added = true;
-              addLabel(layer, i);
-              i++;
+            layer.added = true;
+            addLabel(layer, i);
+            i++;
         });
-        var i = 0;
+
+        var j = 0;
         layer_Dissolved_2.eachLayer(function(layer) {
-            var context = {
-                feature: layer.feature,
-                variables: {}
-            };
-            layer.bindTooltip((layer.feature.properties['kecamata'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['kecamata']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Dissolved_2'});
+            var kec = layer.feature.properties['kecamata'];
+            if (kec) {
+                layer.bindTooltip('<div class="map-badge-tooltip">Kec. ' + escapeHtml(kec) + '</div>', {
+                    permanent: true, 
+                    offset: [0, -16], 
+                    className: 'css_Dissolved_2'
+                });
+            }
             labels.push(layer);
             totalMarkers += 1;
-              layer.added = true;
-              addLabel(layer, i);
-              i++;
+            layer.added = true;
+            addLabel(layer, j);
+            j++;
         });
-        resetLabels([layer_Clipped_1,layer_Dissolved_2]);
-        map.on("zoomend", function(){
-            resetLabels([layer_Clipped_1,layer_Dissolved_2]);
-        });
-        map.on("layeradd", function(){
-            resetLabels([layer_Clipped_1,layer_Dissolved_2]);
-        });
-        map.on("layerremove", function(){
-            resetLabels([layer_Clipped_1,layer_Dissolved_2]);
-        });
+
+        resetLabels([layer_Clipped_1, layer_Dissolved_2]);
+        map.on("zoomend", function(){ resetLabels([layer_Clipped_1, layer_Dissolved_2]); });
+        map.on("layeradd", function(){ resetLabels([layer_Clipped_1, layer_Dissolved_2]); });
+        map.on("layerremove", function(){ resetLabels([layer_Clipped_1, layer_Dissolved_2]); });
         </script>
-        <div id="about-modal" class="modal">
-            <div class="modal-content">
-                <span class="close-btn">&times;</span>
-                <h2>Tentang Website Ini</h2>
-                <p>Website GIS ini dibuat untuk memenuhi tugas akhir mata kuliah Sistem Informasi Geografis dengan memasukkan Peta Kawasan Hutan Kabupaten Pasangkayu yang berada di Provinsi Sulawesi Barat</p>
-                <ul>
-                    <li><strong>Nama Mahasiswa:</strong> <a href="https://aidilham21.github.io/CV-aidil/" target="_blank">Muh. Aidil Ilham</a></li>
-                    <li><strong>Dosen Pengampu:</strong> Affan Ray Mahardika</li>
-                </ul>
+
+        <!-- Modal: Tentang WebGIS -->
+        <div id="about-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="about-modal-title" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-header">
+                    <div class="modal-title-group">
+                        <i class="fas fa-info-circle modal-icon"></i>
+                        <h2 id="about-modal-title">Tentang WebGIS</h2>
+                    </div>
+                    <button class="modal-close-btn" id="about-close-btn" aria-label="Tutup modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p class="modal-intro">
+                        Sistem Informasi Geografis (WebGIS) interaktif untuk visualisasi dan pemetaan <strong>Kawasan Hutan Kabupaten Pasangkayu</strong>, Provinsi Sulawesi Barat.
+                    </p>
+                    <div class="info-card-grid">
+                        <div class="info-card">
+                            <span class="info-label"><i class="fas fa-user-graduate"></i> Mahasiswa / Pengembang</span>
+                            <span class="info-val"><a href="https://aidilham21.github.io/CV-aidil/" target="_blank" rel="noopener noreferrer">Muh. Aidil Ilham</a></span>
+                        </div>
+                        <div class="info-card">
+                            <span class="info-label"><i class="fas fa-chalkboard-teacher"></i> Dosen Pengampu</span>
+                            <span class="info-val">Affan Ray Mahardika</span>
+                        </div>
+                        <div class="info-card">
+                            <span class="info-label"><i class="fas fa-graduation-cap"></i> Mata Kuliah</span>
+                            <span class="info-val">Sistem Informasi Geografis (SIG)</span>
+                        </div>
+                        <div class="info-card">
+                            <span class="info-label"><i class="fas fa-gavel"></i> Dasar Penetapan SK</span>
+                            <span class="info-val">SK Menhut No. 862/Menhut-II/2014</span>
+                        </div>
+                        <div class="info-card">
+                            <span class="info-label"><i class="fas fa-globe-asia"></i> Sistem Koordinat</span>
+                            <span class="info-val">WGS 84 (EPSG:4326)</span>
+                        </div>
+                        <div class="info-card">
+                            <span class="info-label"><i class="fas fa-code-branch"></i> Repositori GitHub</span>
+                            <span class="info-val"><a href="https://github.com/aidilham21/WebGIS_HutanSulawesi" target="_blank" rel="noopener noreferrer">WebGIS_HutanSulawesi</a></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-primary modal-action-btn" id="about-ok-btn">Mengerti</button>
+                </div>
             </div>
         </div>
-        <div id="legend-modal" class="modal">
-            <div class="modal-content">
-                <span class="close-btn">&times;</span>
-                <h2>Legenda Peta</h2>
-                <img src="images/legend_layout.png" alt="Legenda Peta Kawasan Hutan">
-                <a href="images/legend_layout.png" download="Legenda_Peta_Pasangkayu.png" class="download-btn">
-                    <i class="fas fa-download"></i> Download Gambar
-                </a>
+
+        <!-- Modal: Legenda Peta -->
+        <div id="legend-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="legend-modal-title" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-lg">
+                <div class="modal-header">
+                    <div class="modal-title-group">
+                        <i class="fas fa-layer-group modal-icon"></i>
+                        <h2 id="legend-modal-title">Legenda Kawasan Hutan</h2>
+                    </div>
+                    <button class="modal-close-btn" id="legend-close-btn" aria-label="Tutup modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="legend-chips-grid">
+                        <div class="legend-chip-item"><span class="chip-swatch" style="background:#ff7f00;"></span><span><strong>APL:</strong> Areal Penggunaan Lain</span></div>
+                        <div class="legend-chip-item"><span class="chip-swatch" style="background:#b2df8a;"></span><span><strong>HL:</strong> Hutan Lindung</span></div>
+                        <div class="legend-chip-item"><span class="chip-swatch" style="background:#33a02c;"></span><span><strong>HP:</strong> Hutan Produksi</span></div>
+                        <div class="legend-chip-item"><span class="chip-swatch" style="background:#29d53a;"></span><span><strong>HPK:</strong> Hutan Produksi Konversi</span></div>
+                        <div class="legend-chip-item"><span class="chip-swatch" style="background:#becf50;"></span><span><strong>HPT:</strong> Hutan Produksi Terbatas</span></div>
+                        <div class="legend-chip-item"><span class="chip-swatch" style="background:#2bdcc1;"></span><span><strong>TN:</strong> Taman Nasional</span></div>
+                        <div class="legend-chip-item"><span class="chip-swatch" style="background:#1f78b4;"></span><span><strong>Air:</strong> Laut / Sungai / Badan Air</span></div>
+                    </div>
+                    <div class="legend-image-container">
+                        <img src="images/legend_layout.png" alt="Legenda Peta Kawasan Hutan Kabupaten Pasangkayu" class="legend-img" loading="lazy">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="images/legend_layout.png" download="Legenda_Peta_Pasangkayu.png" class="btn-primary">
+                        <i class="fas fa-download"></i> Download Layout Legenda
+                    </a>
+                    <button class="btn-secondary modal-action-btn" id="legend-ok-btn">Tutup</button>
+                </div>
             </div>
         </div>
+
+        <!-- Accessible Modal Logic -->
         <script>
-            // Get the legend modal
+            var aboutModal = document.getElementById("about-modal");
             var legendModal = document.getElementById("legend-modal");
+            var aboutBtn = document.getElementById("about-btn");
             var legendBtn = document.getElementById("legend-btn");
-            var legendCloseBtn = legendModal.getElementsByClassName("close-btn")[0];
+            var aboutCloseBtn = document.getElementById("about-close-btn");
+            var legendCloseBtn = document.getElementById("legend-close-btn");
+            var aboutOkBtn = document.getElementById("about-ok-btn");
+            var legendOkBtn = document.getElementById("legend-ok-btn");
 
-            legendBtn.onclick = function() {
-                legendModal.style.display = "block";
+            function openModal(modalEl) {
+                if (!modalEl) return;
+                modalEl.classList.add("active");
+                modalEl.setAttribute("aria-hidden", "false");
             }
 
-            legendCloseBtn.onclick = function() {
-                legendModal.style.display = "none";
+            function closeModal(modalEl) {
+                if (!modalEl) return;
+                modalEl.classList.remove("active");
+                modalEl.setAttribute("aria-hidden", "true");
             }
 
-            // About modal (existing code)
-            // Get the modal
-            var modal = document.getElementById("about-modal");
+            if (aboutBtn) aboutBtn.addEventListener("click", function() { openModal(aboutModal); });
+            if (legendBtn) legendBtn.addEventListener("click", function() { openModal(legendModal); });
+            if (aboutCloseBtn) aboutCloseBtn.addEventListener("click", function() { closeModal(aboutModal); });
+            if (legendCloseBtn) legendCloseBtn.addEventListener("click", function() { closeModal(legendModal); });
+            if (aboutOkBtn) aboutOkBtn.addEventListener("click", function() { closeModal(aboutModal); });
+            if (legendOkBtn) legendOkBtn.addEventListener("click", function() { closeModal(legendModal); });
 
-            // Get the button that opens the modal
-            var btn = document.getElementById("about-btn");
+            // Close on backdrop click
+            window.addEventListener("click", function(event) {
+                if (event.target === aboutModal) closeModal(aboutModal);
+                if (event.target === legendModal) closeModal(legendModal);
+            });
 
-            // Get the <span> element that closes the modal
-            var span = modal.getElementsByClassName("close-btn")[0];
-
-            // When the user clicks the button, open the modal 
-            btn.onclick = function() {
-              modal.style.display = "block";
-            }
-
-            // When the user clicks on <span> (x), close the modal
-            span.onclick = function() {
-              modal.style.display = "none";
-            }
-
-            // When the user clicks anywhere outside of the modal, close it
-            window.onclick = function(event) {
-              if (event.target == modal) {
-                modal.style.display = "none";
-              }
-              // Close legend modal if clicked outside
-              if (event.target == legendModal) {
-                legendModal.style.display = "none";
-              }
-            }
+            // Close on Escape key press (Accessibility best practice)
+            window.addEventListener("keydown", function(event) {
+                if (event.key === "Escape" || event.key === "Esc") {
+                    closeModal(aboutModal);
+                    closeModal(legendModal);
+                }
+            });
         </script>
     </body>
 </html>
