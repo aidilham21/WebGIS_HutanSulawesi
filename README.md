@@ -74,8 +74,6 @@ WebGIS_HutanSulawesi/
 ├── legend/                  # Ikon swatch legenda layer
 ├── webfonts/                # Berkas font ikon FontAwesome
 ├── index.html               # Halaman utama aplikasi WebGIS
-├── pull.bat                 # Script batch otomatis untuk git pull
-├── push.bat                 # Script batch otomatis untuk git push
 ├── .gitignore               # Daftar berkas/folder yang diabaikan Git
 ├── LICENSE                  # Lisensi proyek (MIT License)
 └── README.md                # Dokumentasi proyek
@@ -106,17 +104,19 @@ Anda dapat mengklik ganda (*double-click*) file `index.html` langsung untuk memb
 
 ---
 
-## ⚡ Panduan Git: `pull.bat` dan `push.bat`
+## ⚡ Sinkronisasi Repositori Git
 
-Tersedia file batch otomatis di Windows untuk mempermudah sinkronisasi dengan GitHub:
+Untuk memperbarui atau mendorong perubahan ke GitHub:
 
-### 1. Menarik Pembaruan (`pull.bat`)
-- Cukup klik ganda pada berkas **`pull.bat`**.
-- Script akan otomatis menjalankan `git fetch origin` dan `git pull origin main` serta menampilkan status secara rapi di layar terminal.
+```bash
+# Menarik pembaruan terbaru dari GitHub
+git pull origin main
 
-### 2. Mendorong Perubahan (`push.bat`)
-- Klik ganda pada berkas **`push.bat`**.
-- Script akan memeriksa file yang berubah, menanyakan pesan commit (*commit message*), melakukan `git add -A`, melakukan `git commit`, dan langsung mengunggahnya ke GitHub dengan `git push origin main`.
+# Mendorong perubahan terbaru ke GitHub
+git add .
+git commit -m "Deskripsi perubahan"
+git push origin main
+```
 
 ---
 
@@ -124,7 +124,7 @@ Tersedia file batch otomatis di Windows untuk mempermudah sinkronisasi dengan Gi
 
 Agar WebGIS ini dapat diakses secara online oleh siapa saja secara gratis melalui URL `https://<username>.github.io/WebGIS_HutanSulawesi/`:
 
-1. Pastikan seluruh berkas telah di-push ke GitHub menggunakan `push.bat`.
+1. Pastikan seluruh berkas telah di-push ke repositori GitHub.
 2. Buka halaman repositori di GitHub.
 3. Klik tab **Settings** (Pengaturan).
 4. Di panel sebelah kiri, pilih menu **Pages**.

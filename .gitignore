@@ -21,3 +21,8 @@ skills/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Local Batch Automation Scripts
+*.bat
+pull.bat
+push.bat
