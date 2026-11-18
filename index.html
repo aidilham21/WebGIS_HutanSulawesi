@@ -1089,10 +1089,20 @@
                                 <span class="chip-dot" style="background:#40916c;"></span>
                                 <span>Lindung</span>
                             </label>
-                            <label class="filter-radio-chip" data-filter="Hutan Produksi">
-                                <input type="radio" name="forest-cat" value="Hutan Produksi">
+                            <label class="filter-radio-chip" data-filter="Produksi">
+                                <input type="radio" name="forest-cat" value="Produksi">
                                 <span class="chip-dot" style="background:#2d6a4f;"></span>
                                 <span>Produksi</span>
+                            </label>
+                            <label class="filter-radio-chip" data-filter="Hutan Produksi Terbatas">
+                                <input type="radio" name="forest-cat" value="Hutan Produksi Terbatas">
+                                <span class="chip-dot" style="background:#708238;"></span>
+                                <span>HPT</span>
+                            </label>
+                            <label class="filter-radio-chip" data-filter="Hutan Produksi Konversi">
+                                <input type="radio" name="forest-cat" value="Hutan Produksi Konversi">
+                                <span class="chip-dot" style="background:#52b788;"></span>
+                                <span>HPK</span>
                             </label>
                             <label class="filter-radio-chip" data-filter="Areal Penggunaan Lain">
                                 <input type="radio" name="forest-cat" value="Areal Penggunaan Lain">
@@ -1145,23 +1155,23 @@
                             <!-- Minimalist Vertical Bar Chart -->
                             <div class="vertical-chart-area">
                                 <div class="chart-column">
-                                    <div class="chart-bar-rect" style="height: 85%;" title="Baras: 312.450 Ha"></div>
-                                    <span class="chart-col-label">Baras</span>
-                                </div>
-                                <div class="chart-column">
-                                    <div class="chart-bar-rect" style="height: 65%;" title="Tikke Raya: 245.180 Ha"></div>
-                                    <span class="chart-col-label">Tikke</span>
-                                </div>
-                                <div class="chart-column">
-                                    <div class="chart-bar-rect" style="height: 60%;" title="Bulu Taba: 228.600 Ha"></div>
-                                    <span class="chart-col-label">Bulu T.</span>
-                                </div>
-                                <div class="chart-column">
-                                    <div class="chart-bar-rect" style="height: 48%;" title="Pasangkayu: 185.340 Ha"></div>
+                                    <div class="chart-bar-rect" style="height: 100%;" title="Pasangkayu: 131.113 Ha"></div>
                                     <span class="chart-col-label">P.kayu</span>
                                 </div>
                                 <div class="chart-column">
-                                    <div class="chart-bar-rect" style="height: 35%;" title="Dapurang: 120.806 Ha"></div>
+                                    <div class="chart-bar-rect" style="height: 74%;" title="Baras: 96.619 Ha"></div>
+                                    <span class="chart-col-label">Baras</span>
+                                </div>
+                                <div class="chart-column">
+                                    <div class="chart-bar-rect" style="height: 43%;" title="Tikke Raya: 55.799 Ha"></div>
+                                    <span class="chart-col-label">Tikke</span>
+                                </div>
+                                <div class="chart-column">
+                                    <div class="chart-bar-rect" style="height: 12%;" title="Bulu Taba: 10.881 Ha"></div>
+                                    <span class="chart-col-label">Bulu T.</span>
+                                </div>
+                                <div class="chart-column">
+                                    <div class="chart-bar-rect" style="height: 5%;" title="Dapurang: 196 Ha"></div>
                                     <span class="chart-col-label">Dapurang</span>
                                 </div>
                             </div>
@@ -1177,28 +1187,28 @@
                                 </thead>
                                 <tbody>
                                     <tr>
+                                        <td><strong>Pasangkayu</strong></td>
+                                        <td style="text-align:right; font-weight:700; color:var(--primary);">131.113 Ha</td>
+                                        <td style="text-align:right; color:#2d6a4f;">SK 862/2014</td>
+                                    </tr>
+                                    <tr>
                                         <td><strong>Baras</strong></td>
-                                        <td style="text-align:right; font-weight:700; color:var(--primary);">312.450 Ha</td>
+                                        <td style="text-align:right; font-weight:700; color:var(--primary);">96.619 Ha</td>
                                         <td style="text-align:right; color:#2d6a4f;">SK 862/2014</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Tikke Raya</strong></td>
-                                        <td style="text-align:right; font-weight:700; color:var(--primary);">245.180 Ha</td>
+                                        <td style="text-align:right; font-weight:700; color:var(--primary);">55.799 Ha</td>
                                         <td style="text-align:right; color:#2d6a4f;">SK 862/2014</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Bulu Taba</strong></td>
-                                        <td style="text-align:right; font-weight:700; color:var(--primary);">228.600 Ha</td>
-                                        <td style="text-align:right; color:#2d6a4f;">SK 862/2014</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Pasangkayu</strong></td>
-                                        <td style="text-align:right; font-weight:700; color:var(--primary);">185.340 Ha</td>
+                                        <td style="text-align:right; font-weight:700; color:var(--primary);">10.881 Ha</td>
                                         <td style="text-align:right; color:#2d6a4f;">SK 862/2014</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Dapurang</strong></td>
-                                        <td style="text-align:right; font-weight:700; color:var(--primary);">120.806 Ha</td>
+                                        <td style="text-align:right; font-weight:700; color:var(--primary);">196 Ha</td>
                                         <td style="text-align:right; color:#2d6a4f;">SK 862/2014</td>
                                     </tr>
                                 </tbody>
@@ -1402,15 +1412,49 @@
         });
         var isSatellite = true;
 
+        // Geodesic Polygon Area Calculation (Ha)
+        function ringArea(coords) {
+            var area = 0;
+            var len = coords.length;
+            if (len > 2) {
+                var rad = Math.PI / 180;
+                for (var i = 0; i < len; i++) {
+                    var p1 = coords[i];
+                    var p2 = coords[(i + 1) % len];
+                    area += (p2[0] - p1[0]) * rad * (2 + Math.sin(p1[1] * rad) + Math.sin(p2[1] * rad));
+                }
+                area = area * 6378137.0 * 6378137.0 / 2.0;
+            }
+            return Math.abs(area);
+        }
+
+        function getFeatureAreaHa(geometry) {
+            if (!geometry) return 0;
+            var totalM2 = 0;
+            if (geometry.type === 'Polygon') {
+                totalM2 += ringArea(geometry.coordinates[0]);
+            } else if (geometry.type === 'MultiPolygon') {
+                geometry.coordinates.forEach(function(poly) {
+                    totalM2 += ringArea(poly[0]);
+                });
+            }
+            return totalM2 / 10000;
+        }
+
+        function formatArea(ha) {
+            if (ha < 1) return '< 1 Ha';
+            return Math.round(ha).toLocaleString('id-ID') + ' Ha';
+        }
+
         // Custom Popup Card Generator
-        function makePopupContent(feature) {
+        function makePopupContent(feature, areaHa) {
             var p = feature.properties || {};
             var cat = p['Keterangan'] || 'Kawasan Hutan';
             var color = getCategoryColor(cat);
             var kec = p['kecamata'] || p['nama'] || '-';
             var kab = p['kab_kota'] || 'Pasangkayu';
             var nosk = p['noskkws'] || 'SK. 862/Menhut-II/2014';
-            var luas = '1.092.376 Ha';
+            var luasStr = formatArea(areaHa !== undefined ? areaHa : getFeatureAreaHa(feature.geometry));
 
             return '<div style="width:250px; font-family:\'Plus Jakarta Sans\', sans-serif;">' +
                 '<div style="background:' + color + '; padding:12px 14px; border-radius:8px 8px 0 0; color:#fff;">' +
@@ -1420,24 +1464,40 @@
                 '</div>' +
                 '<div style="padding:12px 14px; background:#fff; border-radius:0 0 8px 8px; font-size:12px; display:flex; flex-direction:column; gap:8px;">' +
                     '<div><span style="font-size:10px; font-weight:700; text-transform:uppercase; color:#64748b;">Dasar Hukum:</span><br><strong>' + escapeHtml(nosk) + '</strong></div>' +
-                    '<div><span style="font-size:10px; font-weight:700; text-transform:uppercase; color:#64748b;">Luas Kawasan:</span><br><strong style="color:#1b4332; font-size:13.5px;">' + luas + '</strong></div>' +
+                    '<div><span style="font-size:10px; font-weight:700; text-transform:uppercase; color:#64748b;">Estimasi Luas Area:</span><br><strong style="color:#1b4332; font-size:13.5px;">' + luasStr + '</strong></div>' +
                 '</div>' +
             '</div>';
         }
 
         // Polygon Styles: Minimalist & Clean
-        function style_Dissolved(feature) {
+        function getPolygonStyle(feature, isActive) {
             var color = getCategoryColor(feature.properties['Keterangan']);
+            if (isActive) {
+                return {
+                    pane: 'pane_Dissolved_2',
+                    opacity: 1,
+                    color: '#ffffff',
+                    weight: 3.5,
+                    fill: true,
+                    fillOpacity: 0.85,
+                    fillColor: color,
+                    interactive: true
+                };
+            }
             return {
                 pane: 'pane_Dissolved_2',
-                opacity: 1,
-                color: 'rgba(255,255,255,0.85)',
-                weight: 1.2,
+                opacity: 0.9,
+                color: 'rgba(255, 255, 255, 0.85)',
+                weight: 1.5,
                 fill: true,
                 fillOpacity: 0.65,
                 fillColor: color,
                 interactive: true
             };
+        }
+
+        function style_Dissolved(feature) {
+            return getPolygonStyle(feature, false);
         }
 
         map.createPane('pane_Dissolved_2');
@@ -1450,11 +1510,8 @@
             pane: 'pane_Dissolved_2',
             style: style_Dissolved,
             onEachFeature: function(feature, layer) {
-                var p = feature.properties || {};
-                var cat = p['Keterangan'] || '';
-                var kec = p['kecamata'] || '';
-                
-                layer.bindPopup(makePopupContent(feature), { maxWidth: 280, minWidth: 240 });
+                var ha = getFeatureAreaHa(feature.geometry);
+                layer.bindPopup(makePopupContent(feature, ha), { maxWidth: 280, minWidth: 240 });
 
                 layer.on('mouseover', function() {
                     if (layer._itemIndex !== activeIndex) {
@@ -1463,7 +1520,7 @@
                 });
                 layer.on('mouseout', function() {
                     if (layer._itemIndex !== activeIndex) {
-                        layer_Dissolved_2.resetStyle(layer);
+                        layer.setStyle(getPolygonStyle(layer.feature, false));
                     }
                 });
 
@@ -1486,14 +1543,17 @@
         }
         setBounds();
 
-        // Assign indices to layers
+        // Assign indices and calculated data to features
         var counter = 0;
         layer_Dissolved_2.eachLayer(function(layer) {
             layer._itemIndex = counter;
+            var area = getFeatureAreaHa(layer.feature.geometry);
             allFeaturesData.push({
                 index: counter,
                 feature: layer.feature,
-                layer: layer
+                layer: layer,
+                areaHa: area,
+                areaFormatted: formatArea(area)
             });
             counter++;
         });
@@ -1505,6 +1565,17 @@
         function renderCards(featuresList) {
             cardsContainer.innerHTML = '';
             resultsCountEl.textContent = featuresList.length + ' Kawasan Terdaftar';
+
+            if (featuresList.length === 0) {
+                cardsContainer.innerHTML = 
+                    '<div style="padding:36px 16px; text-align:center; color:var(--text-muted); display:flex; flex-direction:column; align-items:center; gap:12px;">' +
+                        '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.5;"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>' +
+                        '<div style="font-size:14px; font-weight:800; color:var(--text-main);">Tidak Ada Kawasan Ditemukan</div>' +
+                        '<div style="font-size:12px; line-height:1.5;">Kombinasi kategori hutan dan kecamatan yang Anda pilih tidak memiliki data kawasan.</div>' +
+                        '<button onclick="resetAllFilters()" style="margin-top:8px; background:var(--primary); color:#ffffff; border:none; padding:8px 16px; border-radius:8px; font-weight:700; font-size:12px; cursor:pointer;">Reset Filter</button>' +
+                    '</div>';
+                return;
+            }
 
             featuresList.forEach(function(item) {
                 var f = item.feature;
@@ -1523,7 +1594,7 @@
                 card.innerHTML = 
                     '<div class="card-header-row">' +
                         '<span class="card-cat-name">' + escapeHtml(cat) + '</span>' +
-                        '<span class="card-area-num">1.092.376 Ha</span>' +
+                        '<span class="card-area-num">' + item.areaFormatted + '</span>' +
                     '</div>' +
                     '<div class="card-location">Kecamatan ' + escapeHtml(kec) + ', Pasangkayu</div>' +
                     '<div class="card-legal-meta">' + escapeHtml(nosk) + ' &bull; Sulawesi Barat</div>';
@@ -1539,18 +1610,13 @@
         function selectCard(idx, shouldFly) {
             activeIndex = idx;
             allFeaturesData.forEach(function(item) {
-                if (item.index === idx) {
-                    item.layer.setStyle({
-                        weight: 3,
-                        color: '#ffffff',
-                        fillOpacity: 0.82
-                    });
-                    if (shouldFly && item.layer.getBounds) {
+                var isSelected = (item.index === idx);
+                if (map.hasLayer(item.layer)) {
+                    item.layer.setStyle(getPolygonStyle(item.feature, isSelected));
+                    if (isSelected && shouldFly && item.layer.getBounds) {
                         map.flyToBounds(item.layer.getBounds(), { padding: [50, 50], duration: 1.2 });
                         item.layer.openPopup();
                     }
-                } else {
-                    layer_Dissolved_2.resetStyle(item.layer);
                 }
             });
 
@@ -1566,34 +1632,89 @@
 
         renderCards(allFeaturesData);
 
-        // Filter Handlers
+        // Filter Matching Logic
         var currentCatFilter = 'all';
         var currentKecFilter = 'all';
 
+        function matchCategory(cat, filter) {
+            if (!filter || filter === 'all') return true;
+            if (filter === 'Produksi') {
+                return (cat.indexOf('Hutan Produksi') !== -1);
+            }
+            return cat === filter;
+        }
+
+        function matchKecamatan(kec, filter) {
+            if (!filter || filter === 'all') return true;
+            return (kec || '').toLowerCase().trim() === filter.toLowerCase().trim();
+        }
+
         function applyFilters() {
+            map.closePopup();
+
             var filtered = allFeaturesData.filter(function(item) {
                 var p = item.feature.properties || {};
-                var matchCat = (currentCatFilter === 'all') || (p.Keterangan === currentCatFilter);
-                var matchKec = (currentKecFilter === 'all') || (p.kecamata === currentKecFilter);
+                var matchCat = matchCategory(p.Keterangan || '', currentCatFilter);
+                var matchKec = matchKecamatan(p.kecamata || '', currentKecFilter);
                 return matchCat && matchKec;
             });
+
             renderCards(filtered);
 
-            layer_Dissolved_2.eachLayer(function(layer) {
-                var p = layer.feature.properties || {};
-                var matchCat = (currentCatFilter === 'all') || (p.Keterangan === currentCatFilter);
-                var matchKec = (currentKecFilter === 'all') || (p.kecamata === currentKecFilter);
-                if (matchCat && matchKec) {
-                    layer.setStyle({ fillOpacity: 0.65, opacity: 1 });
+            var matchingBounds = new L.LatLngBounds();
+            var matchCount = 0;
+
+            allFeaturesData.forEach(function(item) {
+                var p = item.feature.properties || {};
+                var matchCat = matchCategory(p.Keterangan || '', currentCatFilter);
+                var matchKec = matchKecamatan(p.kecamata || '', currentKecFilter);
+                var isMatch = matchCat && matchKec;
+
+                if (isMatch) {
+                    if (!map.hasLayer(item.layer)) {
+                        map.addLayer(item.layer);
+                    }
+                    item.layer.setStyle(getPolygonStyle(item.feature, false));
+                    if (item.layer.getBounds) {
+                        matchingBounds.extend(item.layer.getBounds());
+                    }
+                    matchCount++;
                 } else {
-                    layer.setStyle({ fillOpacity: 0.08, opacity: 0.2 });
+                    if (map.hasLayer(item.layer)) {
+                        map.removeLayer(item.layer);
+                    }
                 }
             });
 
-            if (filtered.length > 0 && currentKecFilter !== 'all') {
-                map.flyToBounds(filtered[0].layer.getBounds(), { padding: [50, 50], duration: 1 });
+            if (matchCount === 1) {
+                selectCard(filtered[0].index, false);
+                if (matchingBounds.isValid()) {
+                    map.flyToBounds(matchingBounds, { padding: [60, 60], duration: 1 });
+                }
+            } else if (matchCount > 1) {
+                activeIndex = null;
+                if (matchingBounds.isValid()) {
+                    map.flyToBounds(matchingBounds, { padding: [50, 50], duration: 1 });
+                }
+            } else {
+                activeIndex = null;
             }
         }
+
+        window.resetAllFilters = function() {
+            currentCatFilter = 'all';
+            currentKecFilter = 'all';
+            document.querySelectorAll('.filter-radio-chip').forEach(function(c) {
+                if (c.getAttribute('data-filter') === 'all') c.classList.add('active');
+                else c.classList.remove('active');
+            });
+            var sel = document.getElementById('kecamatan-select');
+            if (sel) sel.value = 'all';
+            applyFilters();
+            if (bounds_group.getLayers().length) {
+                map.flyToBounds(bounds_group.getBounds(), { padding: [40, 40], duration: 1 });
+            }
+        };
 
         document.querySelectorAll('.filter-radio-chip').forEach(function(chip) {
             chip.addEventListener('click', function() {
@@ -1665,9 +1786,9 @@
 
         // Export Report to CSV
         document.getElementById('btn-export-report').addEventListener('click', function() {
-            var csv = 'No,Kecamatan,Kabupaten,Provinsi,Kategori Hutan,Dasar Hukum SK,Luas SK (Ha)\r\n';
-            json_Dissolved_2.features.forEach(function(f, i) {
-                var p = f.properties || {};
+            var csv = 'No,Kecamatan,Kabupaten,Provinsi,Kategori Hutan,Dasar Hukum SK,Estimasi Luas (Ha)\r\n';
+            allFeaturesData.forEach(function(item, i) {
+                var p = item.feature.properties || {};
                 csv += [
                     i + 1,
                     '"' + (p.kecamata || '-') + '"',
@@ -1675,7 +1796,7 @@
                     '"' + (p.provinsi || 'Sulawesi Barat') + '"',
                     '"' + (p.Keterangan || '-') + '"',
                     '"' + (p.noskkws || 'SK. 862/Menhut-II/2014') + '"',
-                    '"1.092.376"'
+                    '"' + item.areaFormatted + '"'
                 ].join(',') + '\r\n';
             });
 
