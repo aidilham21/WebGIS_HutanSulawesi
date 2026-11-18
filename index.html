@@ -1467,8 +1467,11 @@
                     }
                 });
 
-                layer.on('click', function() {
-                    selectCard(layer._itemIndex);
+                layer.on('click', function(e) {
+                    selectCard(layer._itemIndex, false);
+                    if (!layer.isPopupOpen()) {
+                        layer.openPopup(e.latlng);
+                    }
                 });
             }
         });
@@ -1526,14 +1529,14 @@
                     '<div class="card-legal-meta">' + escapeHtml(nosk) + ' &bull; Sulawesi Barat</div>';
 
                 card.addEventListener('click', function() {
-                    selectCard(item.index);
+                    selectCard(item.index, true);
                 });
 
                 cardsContainer.appendChild(card);
             });
         }
 
-        function selectCard(idx) {
+        function selectCard(idx, shouldFly) {
             activeIndex = idx;
             allFeaturesData.forEach(function(item) {
                 if (item.index === idx) {
@@ -1542,7 +1545,7 @@
                         color: '#ffffff',
                         fillOpacity: 0.82
                     });
-                    if (item.layer.getBounds) {
+                    if (shouldFly && item.layer.getBounds) {
                         map.flyToBounds(item.layer.getBounds(), { padding: [50, 50], duration: 1.2 });
                         item.layer.openPopup();
                     }
@@ -1724,7 +1727,7 @@
             });
 
             if (match && match.layer && match.layer.getBounds) {
-                selectCard(match.index);
+                selectCard(match.index, true);
                 return;
             }
 
