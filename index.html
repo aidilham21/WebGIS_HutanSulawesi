@@ -4,45 +4,45 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-        <meta name="mobile-web-app-capable" content="yes">
-        <meta name="apple-mobile-web-app-capable" content="yes">
-        <meta name="description" content="WebGIS Peta Kawasan Hutan Kabupaten Pasangkayu, Provinsi Sulawesi Barat berdasarkan SK Menhut No. 862/Menhut-II/2014.">
+        <meta name="description" content="WebGIS Peta Kawasan Hutan Kabupaten Pasangkayu, Provinsi Sulawesi Barat">
         <meta name="author" content="Muh. Aidil Ilham">
-        <meta name="theme-color" content="#0d2818">
+        <meta name="theme-color" content="#1b4332">
         <meta http-equiv="X-Content-Type-Options" content="nosniff">
         <meta name="referrer" content="strict-origin-when-cross-origin">
 
-        <title>Peta Kawasan Hutan - Kabupaten Pasangkayu | WebGIS</title>
+        <title>WebGIS Kawasan Hutan Pasangkayu | Sulawesi Barat</title>
 
-        <!-- Leaflet & Plugins Stylesheets -->
+        <!-- Leaflet Core & Extension Stylesheets -->
         <link rel="stylesheet" href="css/leaflet.css">
         <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
         <link rel="stylesheet" href="css/L.Control.Locate.min.css">
         <link rel="stylesheet" href="css/qgis2web.css">
-        <link rel="stylesheet" href="css/fontawesome-all.min.css">
-        <link rel="stylesheet" href="css/leaflet.photon.css">
-        <link rel="stylesheet" href="css/leaflet-measure.css">
 
-        <!-- Google Fonts: Poppins -->
+        <!-- Google Fonts: Inter & Plus Jakarta Sans -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
         <style>
             :root {
-                --brand-dark: #0b2014;
-                --brand-primary: #153e28;
-                --brand-secondary: #2d6a4f;
-                --brand-accent: #52b788;
-                --brand-light: #d8f3dc;
-                --text-main: #1f2937;
-                --text-muted: #64748b;
+                --primary: #1b4332;
+                --primary-light: #2d6a4f;
+                --accent: #40916c;
                 --bg-canvas: #f8fafc;
-                --shadow-soft: 0 4px 14px rgba(11, 32, 20, 0.12);
-                --shadow-elevated: 0 10px 25px -5px rgba(11, 32, 20, 0.25), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-                --radius-md: 8px;
+                --bg-panel: #ffffff;
+                --border: #e2e8f0;
+                --border-subtle: #f1f5f9;
+                --text-main: #0f172a;
+                --text-secondary: #475569;
+                --text-muted: #64748b;
+                --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+                --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.06);
+                --shadow-floating: 0 6px 20px rgba(0, 0, 0, 0.12);
+                --radius-sm: 6px;
+                --radius-md: 10px;
                 --radius-lg: 14px;
-                --transition-smooth: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+                --radius-full: 9999px;
+                --transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
             }
 
             *, *::before, *::after {
@@ -52,443 +52,910 @@
             html, body {
                 width: 100%;
                 height: 100%;
-                padding: 0;
                 margin: 0;
-                font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+                padding: 0;
+                font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
                 background-color: var(--bg-canvas);
-                display: flex;
-                flex-direction: column;
-                overflow: hidden;
                 color: var(--text-main);
+                overflow: hidden;
                 -webkit-font-smoothing: antialiased;
             }
 
-            /* Craft Floor: Custom Selection & Scrollbars */
             ::selection {
-                background: var(--brand-secondary);
+                background: var(--primary-light);
                 color: #ffffff;
             }
 
             ::-webkit-scrollbar {
-                width: 6px;
-                height: 6px;
+                width: 5px;
+                height: 5px;
             }
             ::-webkit-scrollbar-track {
-                background: rgba(0, 0, 0, 0.05);
+                background: transparent;
             }
             ::-webkit-scrollbar-thumb {
-                background: var(--brand-secondary);
-                border-radius: 3px;
+                background: #cbd5e1;
+                border-radius: var(--radius-full);
             }
             ::-webkit-scrollbar-thumb:hover {
-                background: var(--brand-primary);
+                background: #94a3b8;
             }
 
-            /* Header Section */
-            #header {
-                min-height: 64px;
-                background: linear-gradient(135deg, #091a10 0%, #123321 60%, #1b4d32 100%);
-                color: #ffffff;
+            /* Main Layout Grid */
+            #app-container {
                 display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 0 24px;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-                z-index: 2000;
+                width: 100vw;
+                height: 100vh;
                 position: relative;
-                flex-shrink: 0;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                overflow: hidden;
             }
 
-            .header-brand {
+            /* 1. Left Nav Rail (Minimalist Icon Sidebar) */
+            #nav-rail {
+                width: 72px;
+                height: 100%;
+                background: #ffffff;
+                border-right: 1px solid var(--border);
                 display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
                 align-items: center;
+                padding: 14px 0;
+                z-index: 1000;
+                flex-shrink: 0;
                 gap: 16px;
             }
 
-            .header-logo-container {
+            /* Logo Sulbar: No artificial circle boundaries! */
+            .rail-logo-wrap {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                width: 48px;
-                height: 48px;
-                background: rgba(255, 255, 255, 0.08);
-                border-radius: var(--radius-md);
-                padding: 4px;
-                border: 1px solid rgba(255, 255, 255, 0.15);
-            }
-
-            .header-logo {
-                height: 100%;
-                width: auto;
-                object-fit: contain;
-                filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
-            }
-
-            .header-title {
-                display: flex;
-                flex-direction: column;
-                gap: 2px;
-            }
-
-            .header-badge-row {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-            }
-
-            .header-badge {
-                font-size: 11px;
-                font-weight: 600;
-                letter-spacing: 0.5px;
-                text-transform: uppercase;
-                background: rgba(82, 183, 136, 0.2);
-                color: var(--brand-light);
-                padding: 2px 8px;
-                border-radius: 4px;
-                border: 1px solid rgba(82, 183, 136, 0.3);
-                display: inline-flex;
-                align-items: center;
-                gap: 4px;
-            }
-
-            .header-title h1 {
-                margin: 0;
-                font-size: 18px;
-                font-weight: 700;
-                letter-spacing: 0.3px;
-                line-height: 1.2;
-                color: #ffffff;
-            }
-
-            .header-title h1 .highlight {
-                color: #85e3b3;
-                font-weight: 600;
-            }
-
-            /* Header Action Buttons */
-            #header-buttons {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-            }
-
-            #header-buttons .nav-btn,
-            #header-buttons a.nav-btn,
-            #header-buttons button.nav-btn {
-                background: rgba(255, 255, 255, 0.14) !important;
-                color: #ffffff !important;
-                border: 1px solid rgba(255, 255, 255, 0.35) !important;
-                padding: 8px 16px;
-                border-radius: var(--radius-md);
-                cursor: pointer;
-                font-weight: 500;
-                transition: var(--transition-smooth);
-                text-decoration: none !important;
-                font-family: inherit;
-                font-size: 13.5px;
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
-                backdrop-filter: blur(8px);
-                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-            }
-
-            #header-buttons .nav-btn:link,
-            #header-buttons .nav-btn:visited,
-            #header-buttons a.nav-btn:link,
-            #header-buttons a.nav-btn:visited {
-                color: #ffffff !important;
-                text-decoration: none !important;
-            }
-
-            #header-buttons .nav-btn i,
-            #header-buttons a.nav-btn i,
-            #header-buttons button.nav-btn i,
-            #header-buttons .nav-btn span,
-            #header-buttons a.nav-btn span,
-            #header-buttons button.nav-btn span {
-                color: #ffffff !important;
-            }
-
-            #header-buttons .nav-btn:hover,
-            #header-buttons a.nav-btn:hover,
-            #header-buttons button.nav-btn:hover {
-                background: rgba(255, 255, 255, 0.28) !important;
-                border-color: #ffffff !important;
-                color: #ffffff !important;
-                transform: translateY(-1px);
-                box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
-            }
-
-            #header-buttons .nav-btn:hover i,
-            #header-buttons a.nav-btn:hover i,
-            #header-buttons button.nav-btn:hover i,
-            #header-buttons .nav-btn:hover span,
-            #header-buttons a.nav-btn:hover span,
-            #header-buttons button.nav-btn:hover span {
-                color: #ffffff !important;
-            }
-
-            #header-buttons .nav-btn:active,
-            #header-buttons a.nav-btn:active,
-            #header-buttons button.nav-btn:active {
-                transform: translateY(0);
-            }
-
-            #header-buttons .nav-btn:focus-visible,
-            #header-buttons a.nav-btn:focus-visible,
-            #header-buttons button.nav-btn:focus-visible {
-                outline: 2px solid var(--brand-accent);
-                outline-offset: 2px;
-            }
-
-            #header-buttons .nav-btn-accent,
-            #header-buttons button.nav-btn-accent {
-                background: #2d6a4f !important;
-                border: 1px solid #52b788 !important;
-                color: #ffffff !important;
-                box-shadow: 0 2px 8px rgba(45, 106, 79, 0.4);
-            }
-
-            #header-buttons .nav-btn-accent:hover,
-            #header-buttons button.nav-btn-accent:hover {
-                background: #3b8766 !important;
-                border-color: #74c69d !important;
-                color: #ffffff !important;
-            }
-
-            /* Map Area */
-            #map {
                 width: 100%;
-                flex-grow: 1;
-                padding: 0;
-                margin: 0;
-                background-color: #1a202c;
+                padding: 4px 0 8px 0;
             }
 
-            /* Unified Leaflet Controls */
-            .leaflet-bar, .leaflet-control-layers, .leaflet-control-measure, .leaflet-control-search {
-                border: 1px solid rgba(0, 0, 0, 0.08) !important;
-                border-radius: var(--radius-md) !important;
-                box-shadow: var(--shadow-soft) !important;
-                overflow: hidden;
+            .rail-logo {
+                width: 38px;
+                height: auto;
+                max-height: 44px;
+                object-fit: contain;
+                filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.08));
+                transition: transform 0.2s ease;
+                cursor: pointer;
             }
 
-            .leaflet-bar a, 
-            .leaflet-control-measure-toggle, 
-            .gcd-gl-btn {
-                width: 36px !important;
-                height: 36px !important;
-                line-height: 36px !important;
-                display: flex !important;
+            .rail-logo:hover {
+                transform: scale(1.06);
+            }
+
+            .rail-nav {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+                width: 100%;
+                padding: 0 8px;
+            }
+
+            .rail-btn {
+                width: 54px;
+                height: 54px;
+                border-radius: 10px;
+                background: transparent;
+                border: none;
+                color: var(--text-muted);
+                display: flex;
+                flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                background-color: #ffffff !important;
-                color: var(--brand-primary) !important;
-                font-size: 15px !important;
-                border-bottom: 1px solid #f1f5f9 !important;
-                border-radius: 0 !important;
-                box-shadow: none !important;
+                gap: 4px;
                 cursor: pointer;
-                transition: var(--transition-smooth);
-                text-indent: 0 !important;
-                background-image: none !important;
+                transition: var(--transition);
+                text-decoration: none;
+                font-family: inherit;
             }
 
-            .leaflet-bar a:hover, 
-            .leaflet-control-measure-toggle:hover, 
-            .gcd-gl-btn:hover {
-                background-color: #f0fdf4 !important;
-                color: var(--brand-secondary) !important;
+            .rail-btn svg {
+                width: 19px;
+                height: 19px;
+                stroke: currentColor;
+                transition: var(--transition);
             }
 
-            .leaflet-bar a:last-child {
-                border-bottom: none !important;
-            }
-
-            .leaflet-control-zoom-in {
+            .rail-btn span {
+                font-size: 10.5px;
                 font-weight: 600;
+                letter-spacing: 0.2px;
             }
 
-            /* Layer Tree Control */
-            .leaflet-control-layers {
-                background: #ffffff !important;
-                padding: 12px 14px !important;
-                border-radius: var(--radius-md) !important;
-                max-width: 310px;
-                font-family: inherit !important;
-                font-size: 13px !important;
+            .rail-btn:hover {
+                background: #f1f5f9;
+                color: var(--primary);
             }
 
-            .tree-layer-title {
-                font-weight: 600;
-                color: var(--brand-primary);
-                display: inline-flex;
+            /* Active Nav Item: Solid Dark Green Minimalist Box */
+            .rail-btn.active {
+                background: var(--primary) !important;
+                color: #ffffff !important;
+            }
+
+            .rail-btn.active svg {
+                stroke: #ffffff !important;
+                fill: none;
+            }
+
+            .rail-btn.active.fill-icon svg {
+                fill: #ffffff !important;
+                stroke: none !important;
+            }
+
+            .rail-btn.active span {
+                color: #ffffff !important;
+            }
+
+            /* 2. Sliding Content Panel (Sidebar Drawer) */
+            #sidebar-drawer {
+                width: 370px;
+                height: 100%;
+                background: var(--bg-panel);
+                border-right: 1px solid var(--border);
+                display: flex;
+                flex-direction: column;
+                z-index: 990;
+                flex-shrink: 0;
+                overflow: hidden;
+                transition: margin-left 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            }
+
+            #sidebar-drawer.collapsed {
+                margin-left: -370px;
+                pointer-events: none;
+            }
+
+            .drawer-header {
+                padding: 20px 22px 14px 22px;
+                border-bottom: 1px solid var(--border-subtle);
+                display: flex;
                 align-items: center;
-                gap: 6px;
-                margin-bottom: 4px;
+                justify-content: space-between;
+                flex-shrink: 0;
             }
 
-            .tree-legend-table {
-                margin: 4px 0 8px 12px;
-                border-collapse: collapse;
-                font-size: 11.5px;
-                color: #334155;
-            }
-
-            .tree-legend-table td {
-                padding: 2px 4px;
-                vertical-align: middle;
-            }
-
-            .legend-swatch-td {
-                width: 20px;
-                text-align: center;
-            }
-
-            .legend-swatch-td img {
-                border-radius: 2px;
-                vertical-align: middle;
-            }
-
-            /* Search (Photon) Input */
-            .photon-input {
-                height: 36px !important;
-                border: 1px solid #e2e8f0 !important;
-                border-left: none !important;
-                border-radius: 0 var(--radius-md) var(--radius-md) 0 !important;
-                box-shadow: var(--shadow-soft) !important;
-                padding: 0 14px !important;
-                font-family: inherit !important;
-                font-size: 13px !important;
-                outline: none;
-                width: 240px !important;
-                background-color: #ffffff;
+            .drawer-title-group h2 {
+                margin: 0;
+                font-size: 19px;
+                font-weight: 800;
                 color: var(--text-main);
-                transition: var(--transition-smooth);
+                letter-spacing: -0.3px;
             }
 
-            .photon-input:focus {
-                border-color: var(--brand-accent) !important;
-            }
-
-            /* Modern Popup Card */
-            .leaflet-popup-content-wrapper {
-                border-radius: var(--radius-lg) !important;
-                box-shadow: var(--shadow-elevated) !important;
-                padding: 0 !important;
-                overflow: hidden;
-            }
-
-            .leaflet-popup-content {
-                margin: 0 !important;
-                line-height: 1.5;
-                font-family: inherit !important;
-            }
-
-            .custom-popup-card {
-                width: 280px;
-                background: #ffffff;
-                overflow: hidden;
-            }
-
-            .popup-card-header {
-                padding: 12px 16px;
-                color: #ffffff;
-                display: flex;
-                flex-direction: column;
-                gap: 4px;
-            }
-
-            .popup-chip {
-                font-size: 11px;
-                font-weight: 600;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-                background: rgba(0, 0, 0, 0.25);
-                padding: 2px 8px;
-                border-radius: 4px;
-                display: inline-flex;
-                align-items: center;
-                gap: 5px;
-                align-self: flex-start;
-            }
-
-            .popup-title {
-                margin: 2px 0 0 0;
-                font-size: 15px;
-                font-weight: 700;
-                line-height: 1.2;
-            }
-
-            .popup-location {
+            .drawer-subtitle {
                 font-size: 12px;
-                opacity: 0.9;
-                display: flex;
-                align-items: center;
-                gap: 4px;
+                color: var(--text-muted);
+                font-weight: 500;
             }
 
-            .popup-card-body {
-                padding: 14px 16px;
-                display: flex;
-                flex-direction: column;
-                gap: 10px;
-                background: #ffffff;
-                font-size: 12.5px;
-            }
-
-            .popup-row {
-                display: flex;
-                flex-direction: column;
-                gap: 2px;
-            }
-
-            .popup-label {
-                font-size: 11px;
-                font-weight: 600;
-                text-transform: uppercase;
-                letter-spacing: 0.4px;
+            .drawer-close {
+                width: 32px;
+                height: 32px;
+                border-radius: 8px;
+                background: #f1f5f9;
+                border: none;
                 color: var(--text-muted);
                 display: flex;
                 align-items: center;
-                gap: 5px;
+                justify-content: center;
+                cursor: pointer;
+                transition: var(--transition);
+                font-size: 14px;
             }
 
-            .popup-val {
-                font-size: 13px;
-                font-weight: 500;
+            .drawer-close:hover {
+                background: #e2e8f0;
                 color: var(--text-main);
             }
 
-            .highlight-val {
-                color: var(--brand-secondary);
+            .drawer-content {
+                display: none;
+                flex-direction: column;
+                flex: 1 1 auto;
+                min-height: 0;
+                overflow-y: auto;
+                overflow-x: hidden;
+            }
+
+            .drawer-content.active {
+                display: flex;
+            }
+
+            #tab-kawasan {
+                overflow-y: hidden;
+            }
+
+            /* Filter Section (Clean & Minimalist) */
+            .filter-section {
+                padding: 16px 22px;
+                border-bottom: 1px solid var(--border-subtle);
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                background: #fafbfc;
+            }
+
+            .filter-label {
+                font-size: 11px;
                 font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.6px;
+                color: var(--text-muted);
             }
 
-            .muted-val {
+            .filter-radio-grid {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+
+            .filter-radio-chip {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                padding: 6px 11px;
+                border-radius: 6px;
+                background: #ffffff;
+                border: 1px solid var(--border);
+                font-size: 11.5px;
+                font-weight: 600;
+                color: var(--text-secondary);
+                cursor: pointer;
+                transition: var(--transition);
+                user-select: none;
+            }
+
+            .filter-radio-chip input {
+                display: none;
+            }
+
+            .chip-dot {
+                width: 7px;
+                height: 7px;
+                border-radius: 50%;
+                display: inline-block;
+                flex-shrink: 0;
+            }
+
+            .filter-radio-chip:hover {
+                border-color: #cbd5e1;
+                background: #f8fafc;
+            }
+
+            .filter-radio-chip.active {
+                background: var(--primary);
+                border-color: var(--primary);
+                color: #ffffff;
+            }
+
+            .filter-radio-chip.active .chip-dot {
+                background: #ffffff !important;
+            }
+
+            .select-wrapper {
+                position: relative;
+                width: 100%;
+            }
+
+            .styled-select {
+                width: 100%;
+                height: 38px;
+                padding: 0 12px;
+                border-radius: 8px;
+                border: 1px solid var(--border);
+                background: #ffffff;
+                font-family: inherit;
+                font-size: 12.5px;
+                font-weight: 600;
+                color: var(--text-main);
+                outline: none;
+                cursor: pointer;
+                transition: var(--transition);
+                appearance: none;
+                background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+                background-repeat: no-repeat;
+                background-position: right 12px center;
+                background-size: 13px;
+            }
+
+            .styled-select:focus {
+                border-color: var(--primary-light);
+            }
+
+            /* Results Header Bar */
+            .results-header {
+                padding: 14px 22px 10px 22px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                flex-shrink: 0;
+            }
+
+            .results-count {
+                font-size: 13px;
+                font-weight: 700;
+                color: var(--text-main);
+            }
+
+            /* Land Cards List: Anti-Kehimpit Minimalist Cards */
+            .cards-container {
+                flex-grow: 1;
+                overflow-y: auto;
+                padding: 4px 22px 24px 22px;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .land-card {
+                flex-shrink: 0 !important;
+                background: #ffffff;
+                border: 1px solid var(--border);
+                border-radius: var(--radius-md);
+                padding: 14px 16px;
+                cursor: pointer;
+                transition: var(--transition);
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+                position: relative;
+                box-shadow: var(--shadow-sm);
+                border-left: 4px solid var(--card-accent, #2d6a4f);
+            }
+
+            .land-card:hover {
+                transform: translateY(-1px);
+                border-color: #94a3b8;
+                border-left-color: var(--card-accent, #2d6a4f);
+                box-shadow: var(--shadow-md);
+            }
+
+            .land-card.active {
+                border-color: var(--primary) !important;
+                border-left-color: var(--card-accent, #2d6a4f) !important;
+                background: #f8fafc;
+            }
+
+            .card-header-row {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 8px;
+            }
+
+            .card-cat-name {
+                font-size: 14px;
+                font-weight: 800;
+                color: var(--text-main);
+                line-height: 1.2;
+            }
+
+            .card-area-num {
+                font-size: 13px;
+                font-weight: 800;
+                color: var(--primary);
+                white-space: nowrap;
+            }
+
+            .card-location {
                 font-size: 12px;
-                color: #475569;
-                line-height: 1.4;
+                color: var(--text-secondary);
+                font-weight: 500;
             }
 
-            .remark-row {
-                border-top: 1px dashed #e2e8f0;
+            .card-legal-meta {
+                font-size: 11px;
+                color: var(--text-muted);
+                font-weight: 500;
+                border-top: 1px dashed var(--border-subtle);
+                padding-top: 6px;
+                margin-top: 2px;
+            }
+
+            /* Tab 2: Statistik / Insights (Minimalist Bar Chart & Table) */
+            .insights-container {
+                padding: 20px 22px 40px 22px;
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+                flex-shrink: 0;
+            }
+
+            .insights-breadcrumb {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 12px;
+                font-weight: 700;
+                color: var(--primary-light);
+                cursor: pointer;
+                background: none;
+                border: none;
+                padding: 0;
+                font-family: inherit;
+            }
+
+            .insights-breadcrumb:hover {
+                text-decoration: underline;
+            }
+
+            .chart-card {
+                background: #ffffff;
+                border: 1px solid var(--border);
+                border-radius: var(--radius-md);
+                padding: 16px;
+                display: flex;
+                flex-direction: column;
+                gap: 14px;
+            }
+
+            .chart-header-title {
+                font-size: 11.5px;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                color: var(--text-muted);
+            }
+
+            .chart-header-sub {
+                font-size: 13px;
+                font-weight: 800;
+                color: var(--text-main);
+            }
+
+            .vertical-chart-area {
+                display: flex;
+                align-items: flex-end;
+                justify-content: space-between;
+                height: 110px;
                 padding-top: 8px;
+                border-bottom: 1px solid var(--border);
+                gap: 8px;
             }
 
-            /* Tooltip Pill on Map */
-            .map-badge-tooltip {
-                background: rgba(255, 255, 255, 0.94);
+            .chart-column {
+                flex: 1;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: flex-end;
+                gap: 6px;
+            }
+
+            .chart-bar-rect {
+                width: 100%;
+                max-width: 24px;
+                background: var(--primary-light);
+                border-radius: 3px 3px 0 0;
+                transition: height 0.5s ease;
+                cursor: pointer;
+            }
+
+            .chart-bar-rect:hover {
+                background: var(--accent);
+            }
+
+            .chart-col-label {
+                font-size: 10px;
+                font-weight: 700;
+                color: var(--text-muted);
+                text-align: center;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                width: 100%;
+            }
+
+            .insights-table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 12px;
+                margin-top: 4px;
+            }
+
+            .insights-table th {
+                text-align: left;
+                font-size: 10px;
+                font-weight: 700;
+                color: var(--text-muted);
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                padding: 8px 4px;
+                border-bottom: 1.5px solid var(--border);
+            }
+
+            .insights-table td {
+                padding: 9px 4px;
+                border-bottom: 1px solid var(--border-subtle);
+                color: var(--text-main);
+                font-weight: 500;
+            }
+
+            .insights-table tr:hover td {
+                background: #f8fafc;
+            }
+
+            .btn-generate-report {
+                width: 100%;
+                background: #ffffff;
+                border: 1px solid var(--border);
+                color: var(--text-main);
+                padding: 10px;
+                border-radius: var(--radius-md);
+                font-weight: 700;
+                font-size: 12px;
+                cursor: pointer;
+                transition: var(--transition);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                font-family: inherit;
+            }
+
+            .btn-generate-report:hover {
+                background: #f8fafc;
+                border-color: #cbd5e1;
+            }
+
+            /* Tab 3: Legenda */
+            .tab-pane-padded {
+                padding: 20px 22px 40px 22px;
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                flex-shrink: 0;
+            }
+
+            .legend-item-card {
+                flex-shrink: 0 !important;
+                background: #ffffff;
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                padding: 11px 13px;
+                display: flex;
+                align-items: flex-start;
+                gap: 10px;
+                font-size: 12px;
+            }
+
+            .legend-color-box {
+                width: 14px;
+                height: 14px;
+                border-radius: 3px;
+                flex-shrink: 0;
+                margin-top: 2px;
+            }
+
+            .layout-preview-box {
+                flex-shrink: 0 !important;
+                width: 100%;
+                height: 220px;
+                border-radius: 8px;
+                overflow: hidden;
+                border: 1px solid var(--border);
+                background: #f8fafc;
+                margin-top: 6px;
+                position: relative;
+                cursor: pointer;
+                box-shadow: var(--shadow-sm);
+                transition: var(--transition);
+            }
+
+            .layout-preview-box:hover {
+                border-color: var(--primary-light);
+                box-shadow: var(--shadow-md);
+            }
+
+            .layout-preview-box img {
+                width: 100%;
+                height: 100%;
+                display: block;
+                object-fit: cover;
+                object-position: center top;
+            }
+
+            .preview-overlay-badge {
+                position: absolute;
+                bottom: 10px;
+                right: 10px;
+                background: rgba(15, 23, 42, 0.82);
                 backdrop-filter: blur(4px);
-                border: 1px solid rgba(0, 0, 0, 0.1);
-                border-radius: 4px;
-                padding: 2px 8px;
+                color: #ffffff;
+                padding: 5px 10px;
+                border-radius: 6px;
                 font-size: 11px;
                 font-weight: 600;
-                color: var(--brand-primary);
-                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                pointer-events: none;
+                transition: var(--transition);
+            }
+
+            .layout-preview-box:hover .preview-overlay-badge {
+                background: var(--primary);
+            }
+
+            .btn-download-layout {
+                flex-shrink: 0 !important;
+                background: var(--primary);
+                color: #ffffff !important;
+                text-decoration: none;
+                padding: 11px 16px;
+                border-radius: 8px;
+                font-size: 12.5px;
+                font-weight: 600;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                transition: var(--transition);
+                margin-bottom: 24px;
+            }
+
+            .btn-download-layout:hover {
+                background: var(--primary-light);
+            }
+
+            /* Modal Fullscreen Preview */
+            .modal-backdrop {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background: rgba(15, 23, 42, 0.78);
+                backdrop-filter: blur(6px);
+                z-index: 2000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 24px;
+            }
+
+            .modal-dialog {
+                background: #ffffff;
+                border-radius: var(--radius-lg);
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+                width: 100%;
+                max-width: 900px;
+                max-height: 90vh;
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+            }
+
+            .modal-header {
+                padding: 16px 20px;
+                border-bottom: 1px solid var(--border);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                flex-shrink: 0;
+            }
+
+            .modal-header h4 {
+                margin: 0;
+                font-size: 15px;
+                font-weight: 800;
+                color: var(--text-main);
+            }
+
+            .modal-body {
+                padding: 16px;
+                overflow: auto;
+                background: #0f172a;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex: 1 1 auto;
+                min-height: 0;
+            }
+
+            .modal-img {
+                max-width: 100%;
+                max-height: 68vh;
+                object-fit: contain;
+                border-radius: 4px;
+                box-shadow: var(--shadow-md);
+            }
+
+            .modal-footer {
+                padding: 12px 20px;
+                border-top: 1px solid var(--border);
+                display: flex;
+                justify-content: flex-end;
+                background: #ffffff;
+                flex-shrink: 0;
+            }
+
+            /* 3. Map Viewport */
+            #map-viewport {
+                flex-grow: 1;
+                height: 100%;
+                position: relative;
+                overflow: hidden;
+            }
+
+            #map {
+                width: 100%;
+                height: 100%;
+                background-color: #1a241e;
+            }
+
+            /* Floating Search Bar (Top Left) */
+            #map-floating-top {
+                position: absolute;
+                top: 20px;
+                left: 20px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                z-index: 800;
+                pointer-events: none;
+            }
+
+            #map-floating-top > * {
+                pointer-events: auto;
+            }
+
+            .floating-search-bar {
+                background: #ffffff;
+                height: 42px;
+                border-radius: var(--radius-md);
+                box-shadow: var(--shadow-floating);
+                border: 1px solid rgba(0, 0, 0, 0.08);
+                display: flex;
+                align-items: center;
+                padding: 0 4px 0 14px;
+                width: 270px;
+                transition: var(--transition);
+            }
+
+            .floating-search-bar:focus-within {
+                width: 300px;
+                border-color: var(--primary-light);
+            }
+
+            .search-icon-lead {
+                color: var(--text-muted);
+                width: 15px;
+                height: 15px;
+                margin-right: 8px;
+                stroke: currentColor;
+            }
+
+            .floating-search-bar input {
+                border: none;
+                outline: none;
+                font-family: inherit;
+                font-size: 13px;
+                color: var(--text-main);
+                width: 100%;
+                background: transparent;
+            }
+
+            .search-submit-btn {
+                background: var(--primary);
+                color: #ffffff;
+                border: none;
+                width: 34px;
+                height: 34px;
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: var(--transition);
+                flex-shrink: 0;
+            }
+
+            .search-submit-btn svg {
+                width: 14px;
+                height: 14px;
+                stroke: #ffffff;
+            }
+
+            .search-submit-btn:hover {
+                background: var(--primary-light);
+            }
+
+            .drawer-toggle-pill {
+                display: none;
+                background: #ffffff;
+                height: 42px;
+                padding: 0 16px;
+                border-radius: var(--radius-md);
+                box-shadow: var(--shadow-floating);
+                border: 1px solid rgba(0, 0, 0, 0.08);
+                align-items: center;
+                gap: 8px;
+                font-size: 13px;
+                font-weight: 700;
+                color: var(--text-main);
+                cursor: pointer;
+                font-family: inherit;
+            }
+
+            /* Floating Bottom Controls (Locate, Zoom, Basemap) */
+            #floating-bottom-controls {
+                position: absolute;
+                bottom: 24px;
+                left: 20px;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                z-index: 800;
+            }
+
+            .floating-ctrl-btn {
+                width: 40px;
+                height: 40px;
+                background: #ffffff;
+                border-radius: var(--radius-md);
+                border: 1px solid rgba(0, 0, 0, 0.08);
+                box-shadow: var(--shadow-floating);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                color: var(--text-secondary);
+                font-size: 15px;
+                font-weight: 700;
+                transition: var(--transition);
+            }
+
+            .floating-ctrl-btn svg {
+                width: 17px;
+                height: 17px;
+                stroke: currentColor;
+            }
+
+            .floating-ctrl-btn:hover {
+                background: #f8fafc;
+                color: var(--primary);
+            }
+
+            .floating-ctrl-group {
+                display: flex;
+                flex-direction: column;
+                background: #ffffff;
+                border-radius: var(--radius-md);
+                border: 1px solid rgba(0, 0, 0, 0.08);
+                box-shadow: var(--shadow-floating);
+                overflow: hidden;
+            }
+
+            .floating-ctrl-group .floating-ctrl-btn {
+                box-shadow: none;
+                border: none;
+                border-radius: 0;
+            }
+
+            .floating-ctrl-group .floating-ctrl-btn:first-child {
+                border-bottom: 1px solid var(--border-subtle);
+            }
+
+            /* Clean Leaflet Tooltip */
+            .map-badge-tooltip {
+                background: rgba(255, 255, 255, 0.96);
+                border: 1px solid rgba(0, 0, 0, 0.1);
+                border-radius: 6px;
+                padding: 3px 8px;
+                font-size: 11px;
+                font-weight: 700;
+                color: var(--primary);
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
                 white-space: nowrap;
             }
 
@@ -501,326 +968,369 @@
                 display: none !important;
             }
 
-            /* Modals (Accessible Glassmorphic Dialogs) */
-            .modal {
-                display: none;
-                position: fixed;
-                inset: 0;
-                z-index: 3000;
-                background-color: rgba(9, 26, 16, 0.65);
-                backdrop-filter: blur(6px);
-                align-items: center;
-                justify-content: center;
-                padding: 20px;
-                opacity: 0;
-                transition: opacity 0.25s ease;
+            /* Hide Leaflet Default Top-Left Controls to eliminate rogue white square */
+            .leaflet-top.leaflet-left,
+            .leaflet-control-locate {
+                display: none !important;
             }
 
-            .modal.active {
-                display: flex;
-                opacity: 1;
-            }
-
-            .modal-dialog {
-                background: #ffffff;
-                border-radius: var(--radius-lg);
-                width: 100%;
-                max-width: 540px;
-                max-height: 90vh;
-                display: flex;
-                flex-direction: column;
-                box-shadow: var(--shadow-elevated);
-                overflow: hidden;
-                border: 1px solid rgba(255, 255, 255, 0.2);
-                animation: modalScale 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-            }
-
-            .modal-dialog-lg {
-                max-width: 780px;
-            }
-
-            @keyframes modalScale {
-                from { transform: scale(0.95); opacity: 0; }
-                to { transform: scale(1); opacity: 1; }
-            }
-
-            .modal-header {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 16px 22px;
-                background: linear-gradient(135deg, #0d2818 0%, #1b4d32 100%);
-                color: #ffffff;
-            }
-
-            .modal-title-group {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-            }
-
-            .modal-title-group h2 {
-                margin: 0;
-                font-size: 17px;
-                font-weight: 600;
-                letter-spacing: 0.3px;
-                color: #ffffff;
-            }
-
-            .modal-icon {
-                font-size: 18px;
-                color: var(--brand-accent);
-            }
-
-            .modal-close-btn {
-                background: rgba(255, 255, 255, 0.12);
-                border: none;
-                color: #ffffff;
-                width: 32px;
-                height: 32px;
-                border-radius: 50%;
-                font-size: 20px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-                transition: var(--transition-smooth);
-            }
-
-            .modal-close-btn:hover {
-                background: rgba(255, 255, 255, 0.25);
-                transform: rotate(90deg);
-            }
-
-            .modal-body {
-                padding: 22px;
-                overflow-y: auto;
-                font-size: 13.5px;
-                line-height: 1.6;
-                color: var(--text-main);
-            }
-
-            .modal-intro {
-                margin: 0 0 16px 0;
-                font-size: 14px;
-                color: #334155;
-            }
-
-            .info-card-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-                gap: 12px;
-                margin-top: 14px;
-            }
-
-            .info-card {
-                background: #f8fafc;
-                border: 1px solid #e2e8f0;
-                border-radius: var(--radius-md);
-                padding: 12px 14px;
-                display: flex;
-                flex-direction: column;
-                gap: 4px;
-            }
-
-            .info-label {
-                font-size: 11px;
-                font-weight: 600;
-                text-transform: uppercase;
-                letter-spacing: 0.4px;
-                color: var(--text-muted);
-                display: flex;
-                align-items: center;
-                gap: 6px;
-            }
-
-            .info-val {
-                font-size: 13.5px;
-                font-weight: 500;
-                color: var(--text-main);
-            }
-
-            .info-val a,
-            .info-val a:visited {
-                color: var(--brand-secondary);
-                text-decoration: none;
-                font-weight: 600;
-            }
-            .info-val a:hover {
-                color: #1b4d32;
-                text-decoration: underline;
-            }
-
-            /* Legend Modal Content */
-            .legend-chips-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 8px;
-                margin-bottom: 18px;
-                background: #f8fafc;
-                padding: 14px;
-                border-radius: var(--radius-md);
-                border: 1px solid #e2e8f0;
-            }
-
-            .legend-chip-item {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                font-size: 12px;
-                color: #334155;
-            }
-
-            .chip-swatch {
-                width: 14px;
-                height: 14px;
-                border-radius: 3px;
-                border: 1px solid rgba(0, 0, 0, 0.2);
-                flex-shrink: 0;
-            }
-
-            .legend-image-container {
-                width: 100%;
-                background: #f1f5f9;
-                border-radius: var(--radius-md);
-                border: 1px solid #e2e8f0;
-                overflow: hidden;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                padding: 8px;
-                max-height: 52vh;
-            }
-
-            .legend-img {
-                max-width: 100%;
-                max-height: 50vh;
-                object-fit: contain;
-                border-radius: 4px;
-            }
-
-            .modal-footer {
-                padding: 14px 22px;
-                background: #f8fafc;
-                border-top: 1px solid #e2e8f0;
-                display: flex;
-                align-items: center;
-                justify-content: flex-end;
-                gap: 10px;
-            }
-
-            .btn-primary {
-                background: var(--brand-secondary);
-                color: #ffffff;
-                border: none;
-                padding: 9px 18px;
-                border-radius: var(--radius-md);
-                font-size: 13.5px;
-                font-weight: 500;
-                cursor: pointer;
-                transition: var(--transition-smooth);
-                text-decoration: none;
-                display: inline-flex;
-                align-items: center;
-                gap: 6px;
-                font-family: inherit;
-            }
-
-            .btn-primary:hover {
-                background: #1b4d32;
-                transform: translateY(-1px);
-            }
-
-            .btn-secondary {
-                background: #ffffff;
-                color: #475569;
-                border: 1px solid #cbd5e1;
-                padding: 9px 18px;
-                border-radius: var(--radius-md);
-                font-size: 13.5px;
-                font-weight: 500;
-                cursor: pointer;
-                transition: var(--transition-smooth);
-                font-family: inherit;
-            }
-
-            .btn-secondary:hover {
-                background: #f1f5f9;
-                color: var(--text-main);
-            }
-
-            /* Responsive Adjustments */
-            @media (max-width: 768px) {
-                #header {
-                    padding: 8px 16px;
-                    min-height: 56px;
+            /* Responsive */
+            @media (max-width: 900px) {
+                #sidebar-drawer {
+                    position: absolute;
+                    left: 72px;
+                    top: 0;
+                    bottom: 0;
+                    z-index: 1010;
+                    box-shadow: 6px 0 24px rgba(0, 0, 0, 0.2);
                 }
-                .header-logo-container {
-                    width: 38px;
-                    height: 38px;
+                #sidebar-drawer.collapsed {
+                    margin-left: 0;
+                    transform: translateX(-120%);
                 }
-                .header-badge {
-                    display: none;
+            }
+
+            @media (max-width: 600px) {
+                #nav-rail {
+                    width: 58px;
                 }
-                .header-title h1 {
-                    font-size: 15px;
+                .rail-btn {
+                    width: 46px;
+                    height: 46px;
                 }
-                .nav-btn span {
-                    display: none;
+                #sidebar-drawer {
+                    left: 58px;
+                    width: calc(100vw - 58px);
                 }
-                .nav-btn {
-                    padding: 8px 10px;
-                }
-                .photon-input {
-                    width: 160px !important;
-                }
-                .modal-dialog {
-                    max-width: 95%;
-                    max-height: 94vh;
-                }
-                .modal-body {
-                    padding: 16px;
-                }
-                .info-card-grid {
-                    grid-template-columns: 1fr;
+                .floating-search-bar {
+                    width: 220px;
                 }
             }
         </style>
     </head>
     <body>
-        <!-- Header Dashboard Bar -->
-        <header id="header">
-            <div class="header-brand">
-                <div class="header-logo-container">
-                    <img src="images/logo_west_sulawesi.png" alt="Logo Sulawesi Barat" class="header-logo">
+        <div id="app-container">
+            <!-- 1. Left Nav Rail (Slim Minimalist Sidebar) -->
+            <aside id="nav-rail" aria-label="Navigasi Utama">
+                <!-- Logo Sulbar: Clean, without boundaries or gray circle frames -->
+                <div class="rail-logo-wrap" title="Sulawesi Barat">
+                    <img src="images/logo_west_sulawesi.png" alt="Logo Sulawesi Barat" class="rail-logo">
                 </div>
-                <div class="header-title">
-                    <div class="header-badge-row">
-                        <span class="header-badge"><i class="fas fa-tree"></i> WebGIS Kehutanan</span>
+
+                <nav class="rail-nav">
+                    <!-- Kawasan Button (Inline SVG: never fails) -->
+                    <button class="rail-btn active" data-tab="kawasan" title="Daftar Kawasan Hutan">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+                            <polyline points="2 17 12 22 22 17"/>
+                            <polyline points="2 12 12 17 22 12"/>
+                        </svg>
+                        <span>Kawasan</span>
+                    </button>
+
+                    <!-- Statistik Button -->
+                    <button class="rail-btn" data-tab="statistik" title="Statistik & Analisis Luas">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="20" x2="18" y2="10"/>
+                            <line x1="12" y1="20" x2="12" y2="4"/>
+                            <line x1="6" y1="20" x2="6" y2="14"/>
+                        </svg>
+                        <span>Statistik</span>
+                    </button>
+
+                    <!-- Legenda Button -->
+                    <button class="rail-btn" data-tab="legenda" title="Legenda Peta">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="7" height="7"/>
+                            <rect x="14" y="3" width="7" height="7"/>
+                            <rect x="14" y="14" width="7" height="7"/>
+                            <rect x="3" y="14" width="7" height="7"/>
+                        </svg>
+                        <span>Legenda</span>
+                    </button>
+
+                    <!-- GitHub Button (Inline Official GitHub SVG) -->
+                    <a href="https://github.com/aidilham21" target="_blank" rel="noopener noreferrer" class="rail-btn fill-icon" title="GitHub @aidilham21">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12Z"/>
+                        </svg>
+                        <span>GitHub</span>
+                    </a>
+                </nav>
+            </aside>
+
+            <!-- 2. Sliding Content Panel (Sidebar Drawer) -->
+            <aside id="sidebar-drawer" aria-label="Panel Konten">
+                <div class="drawer-header">
+                    <div class="drawer-title-group">
+                        <h2 id="drawer-main-title">Kawasan Hutan</h2>
+                        <span class="drawer-subtitle">Kab. Pasangkayu, Sulawesi Barat</span>
                     </div>
-                    <h1>Peta Kawasan Hutan <span class="highlight">Kab. Pasangkayu</span></h1>
+                    <button id="drawer-close-btn" class="drawer-close" title="Tutup Panel">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Tab 1: Kawasan (Clean, Spacious Land Cards) -->
+                <div id="tab-kawasan" class="drawer-content active">
+                    <div class="filter-section">
+                        <span class="filter-label">Kategori Hutan</span>
+                        <div class="filter-radio-grid">
+                            <label class="filter-radio-chip active" data-filter="all">
+                                <input type="radio" name="forest-cat" value="all" checked>
+                                <span class="chip-dot" style="background:#2d6a4f;"></span>
+                                <span>Semua</span>
+                            </label>
+                            <label class="filter-radio-chip" data-filter="Hutan Lindung">
+                                <input type="radio" name="forest-cat" value="Hutan Lindung">
+                                <span class="chip-dot" style="background:#40916c;"></span>
+                                <span>Lindung</span>
+                            </label>
+                            <label class="filter-radio-chip" data-filter="Hutan Produksi">
+                                <input type="radio" name="forest-cat" value="Hutan Produksi">
+                                <span class="chip-dot" style="background:#2d6a4f;"></span>
+                                <span>Produksi</span>
+                            </label>
+                            <label class="filter-radio-chip" data-filter="Areal Penggunaan Lain">
+                                <input type="radio" name="forest-cat" value="Areal Penggunaan Lain">
+                                <span class="chip-dot" style="background:#d97706;"></span>
+                                <span>APL</span>
+                            </label>
+                            <label class="filter-radio-chip" data-filter="Taman Nasional">
+                                <input type="radio" name="forest-cat" value="Taman Nasional">
+                                <span class="chip-dot" style="background:#0d9488;"></span>
+                                <span>Taman Nas.</span>
+                            </label>
+                        </div>
+
+                        <div class="select-wrapper">
+                            <select id="kecamatan-select" class="styled-select" aria-label="Filter Berdasarkan Kecamatan">
+                                <option value="all">Semua Kecamatan (5 Wilayah)</option>
+                                <option value="Baras">Kecamatan Baras</option>
+                                <option value="Tikke Raya">Kecamatan Tikke Raya</option>
+                                <option value="Bulu Taba">Kecamatan Bulu Taba</option>
+                                <option value="Pasangkayu">Kecamatan Pasangkayu</option>
+                                <option value="Dapurang">Kecamatan Dapurang</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="results-header">
+                        <span id="results-count" class="results-count">7 Kawasan Terdaftar</span>
+                    </div>
+
+                    <!-- Cards Container (Anti-Squish: flex-shrink 0 with generous breathing room) -->
+                    <div id="cards-list" class="cards-container">
+                        <!-- Dynamic Minimalist Cards rendered via JS -->
+                    </div>
+                </div>
+
+                <!-- Tab 2: Statistik / Insights (Minimalist Bar Chart & Data Table) -->
+                <div id="tab-statistik" class="drawer-content">
+                    <div class="insights-container">
+                        <button class="insights-breadcrumb" id="btn-insights-back">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                            Kembali ke Kawasan
+                        </button>
+
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <span class="chart-header-title">Luas per Kecamatan (Ha)</span>
+                                <span class="chart-header-sub">Kabupaten Pasangkayu, Sulawesi Barat</span>
+                            </div>
+
+                            <!-- Minimalist Vertical Bar Chart -->
+                            <div class="vertical-chart-area">
+                                <div class="chart-column">
+                                    <div class="chart-bar-rect" style="height: 85%;" title="Baras: 312.450 Ha"></div>
+                                    <span class="chart-col-label">Baras</span>
+                                </div>
+                                <div class="chart-column">
+                                    <div class="chart-bar-rect" style="height: 65%;" title="Tikke Raya: 245.180 Ha"></div>
+                                    <span class="chart-col-label">Tikke</span>
+                                </div>
+                                <div class="chart-column">
+                                    <div class="chart-bar-rect" style="height: 60%;" title="Bulu Taba: 228.600 Ha"></div>
+                                    <span class="chart-col-label">Bulu T.</span>
+                                </div>
+                                <div class="chart-column">
+                                    <div class="chart-bar-rect" style="height: 48%;" title="Pasangkayu: 185.340 Ha"></div>
+                                    <span class="chart-col-label">P.kayu</span>
+                                </div>
+                                <div class="chart-column">
+                                    <div class="chart-bar-rect" style="height: 35%;" title="Dapurang: 120.806 Ha"></div>
+                                    <span class="chart-col-label">Dapurang</span>
+                                </div>
+                            </div>
+
+                            <!-- Minimalist Table -->
+                            <table class="insights-table">
+                                <thead>
+                                    <tr>
+                                        <th>Kecamatan</th>
+                                        <th style="text-align:right;">Luas (Ha)</th>
+                                        <th style="text-align:right;">Dasar Hukum</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Baras</strong></td>
+                                        <td style="text-align:right; font-weight:700; color:var(--primary);">312.450 Ha</td>
+                                        <td style="text-align:right; color:#2d6a4f;">SK 862/2014</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Tikke Raya</strong></td>
+                                        <td style="text-align:right; font-weight:700; color:var(--primary);">245.180 Ha</td>
+                                        <td style="text-align:right; color:#2d6a4f;">SK 862/2014</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Bulu Taba</strong></td>
+                                        <td style="text-align:right; font-weight:700; color:var(--primary);">228.600 Ha</td>
+                                        <td style="text-align:right; color:#2d6a4f;">SK 862/2014</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Pasangkayu</strong></td>
+                                        <td style="text-align:right; font-weight:700; color:var(--primary);">185.340 Ha</td>
+                                        <td style="text-align:right; color:#2d6a4f;">SK 862/2014</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Dapurang</strong></td>
+                                        <td style="text-align:right; font-weight:700; color:var(--primary);">120.806 Ha</td>
+                                        <td style="text-align:right; color:#2d6a4f;">SK 862/2014</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <button class="btn-generate-report" id="btn-export-report">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                Unduh Ringkasan Data (CSV)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 3: Legenda -->
+                <div id="tab-legenda" class="drawer-content">
+                    <div class="tab-pane-padded">
+                        <span class="filter-label">Klasifikasi Kawasan Hutan</span>
+
+                        <div class="legend-item-card">
+                            <span class="legend-color-box" style="background:#40916c;"></span>
+                            <div><strong>Hutan Lindung (HL)</strong><br><span style="color:#64748b;">Perlindungan sistem penyangga kehidupan, tata air & erosi.</span></div>
+                        </div>
+                        <div class="legend-item-card">
+                            <span class="legend-color-box" style="background:#2d6a4f;"></span>
+                            <div><strong>Hutan Produksi (HP)</strong><br><span style="color:#64748b;">Memproduksi hasil hutan kayu dan bukan kayu lestari.</span></div>
+                        </div>
+                        <div class="legend-item-card">
+                            <span class="legend-color-box" style="background:#708238;"></span>
+                            <div><strong>Hutan Produksi Terbatas (HPT)</strong><br><span style="color:#64748b;">Eksploitasi terbatas guna konservasi tanah & air.</span></div>
+                        </div>
+                        <div class="legend-item-card">
+                            <span class="legend-color-box" style="background:#52b788;"></span>
+                            <div><strong>Hutan Produksi Konversi (HPK)</strong><br><span style="color:#64748b;">Dapat dicadangkan untuk peruntukan non-kehutanan.</span></div>
+                        </div>
+                        <div class="legend-item-card">
+                            <span class="legend-color-box" style="background:#d97706;"></span>
+                            <div><strong>Areal Penggunaan Lain (APL)</strong><br><span style="color:#64748b;">Areal non-kawasan hutan untuk permukiman & kebun.</span></div>
+                        </div>
+                        <div class="legend-item-card">
+                            <span class="legend-color-box" style="background:#0d9488;"></span>
+                            <div><strong>Taman Nasional (TN)</strong><br><span style="color:#64748b;">Kawasan pelestarian alam bersistem zonasi.</span></div>
+                        </div>
+
+                        <span class="filter-label" style="margin-top:6px;">Pratinjau Layout Peta</span>
+                        <div class="layout-preview-box" id="btn-preview-layout" onclick="openLayoutModal()" title="Klik untuk memperbesar layout peta">
+                            <img src="images/legend_layout.png" alt="Layout Legenda Pasangkayu">
+                            <div class="preview-overlay-badge">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                                <span>Perbesar Layout</span>
+                            </div>
+                        </div>
+                        <a href="images/legend_layout.png" download="Legenda_Peta_Pasangkayu.png" class="btn-download-layout">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            Unduh Gambar Layout (Resolusi Tinggi)
+                        </a>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- 3. Map Viewport -->
+            <main id="map-viewport" role="main">
+                <!-- Floating Top Bar (Clean, Minimalist Search Only) -->
+                <div id="map-floating-top">
+                    <div class="floating-search-bar" id="search-bar-container">
+                        <svg class="search-icon-lead" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"/>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        </svg>
+                        <input type="text" id="floating-search-input" placeholder="Cari wilayah / lokasi..." aria-label="Cari Lokasi">
+                        <button id="floating-search-submit" class="search-submit-btn" title="Cari">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                                <polyline points="12 5 19 12 12 19"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <button class="drawer-toggle-pill" id="btn-open-drawer" title="Buka Panel Data">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                        <span>Buka Panel</span>
+                    </button>
+                </div>
+
+                <!-- Leaflet Map Container -->
+                <div id="map"></div>
+
+                <!-- Floating Bottom Controls: Minimalist Locate, Zoom, Basemap -->
+                <div id="floating-bottom-controls">
+                    <button class="floating-ctrl-btn" id="ctrl-locate-btn" title="Lokasi Saya">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="22" y1="12" x2="18" y2="12"/>
+                            <line x1="6" y1="12" x2="2" y2="12"/>
+                            <line x1="12" y1="6" x2="12" y2="2"/>
+                            <line x1="12" y1="22" x2="12" y2="18"/>
+                        </svg>
+                    </button>
+                    <div class="floating-ctrl-group">
+                        <button class="floating-ctrl-btn" id="ctrl-zoom-in" title="Perbesar">+</button>
+                        <button class="floating-ctrl-btn" id="ctrl-zoom-out" title="Perkecil">&minus;</button>
+                    </div>
+                    <button class="floating-ctrl-btn" id="ctrl-basemap-btn" title="Ganti Peta Dasar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+                            <polyline points="2 17 12 22 22 17"/>
+                            <polyline points="2 12 12 17 22 12"/>
+                        </svg>
+                    </button>
+                </div>
+            </main>
+        </div>
+
+        <!-- Modal Fullscreen Image Preview -->
+        <div id="layout-modal" class="modal-backdrop" style="display:none;" onclick="if(event.target===this)closeLayoutModal()" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+            <div class="modal-dialog">
+                <div class="modal-header">
+                    <h4 id="modal-title">Pratinjau Layout Peta Resolusi Penuh</h4>
+                    <button id="modal-close-btn" class="drawer-close" onclick="closeLayoutModal()" title="Tutup">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <img src="images/legend_layout.png" alt="Layout Legenda Resolusi Penuh" class="modal-img">
+                </div>
+                <div class="modal-footer">
+                    <a href="images/legend_layout.png" download="Legenda_Peta_Pasangkayu.png" class="btn-download-layout" style="margin-bottom:0;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        Unduh File Resolusi Asli (4960 &times; 3507 px)
+                    </a>
                 </div>
             </div>
-            <nav id="header-buttons">
-                <a href="https://github.com/aidilham21" target="_blank" rel="noopener noreferrer" class="nav-btn" title="Lihat Profil GitHub (@aidilham21)">
-                    <i class="fab fa-github"></i>
-                    <span>Profil</span>
-                </a>
-                <button id="legend-btn" class="nav-btn nav-btn-accent" title="Buka Legenda Kawasan Hutan">
-                    <i class="fas fa-layer-group"></i>
-                    <span>Legenda</span>
-                </button>
-                <button id="about-btn" class="nav-btn" title="Informasi Mengenai Website Ini">
-                    <i class="fas fa-info-circle"></i>
-                    <span>Tentang</span>
-                </button>
-            </nav>
-        </header>
+        </div>
 
-        <!-- Leaflet Map Container -->
-        <main id="map" role="application" aria-label="Peta Interaktif Kawasan Hutan Kabupaten Pasangkayu"></main>
-
-        <!-- GeoJSON Data Files -->
+        <!-- GeoJSON Data Files & Scripts -->
         <script src="js/qgis2web_expressions.js"></script>
         <script src="js/leaflet.js"></script>
         <script src="js/L.Control.Layers.Tree.min.js"></script>
@@ -832,13 +1342,11 @@
         <script src="js/rbush.min.js"></script>
         <script src="js/labelgun.min.js"></script>
         <script src="js/labels.js"></script>
-        <script src="js/leaflet.photon.js"></script>
-        <script src="js/leaflet-measure.js"></script>
         <script src="data/Clipped_1.js"></script>
         <script src="data/Dissolved_2.js"></script>
 
         <script>
-        // Security Utility: Escape HTML to defend against DOM-XSS (OWASP A03)
+        // Security: Escape HTML strings to prevent XSS
         function escapeHtml(str) {
             if (str === null || str === undefined) return '';
             return String(str)
@@ -849,43 +1357,21 @@
                 .replace(/'/g, '&#039;');
         }
 
-        // Formatting Helpers for Human-Readable Map Popups
-        function getForestCategoryColor(category) {
+        // Minimalist Forest Category Colors (Sophisticated, natural, zero neon)
+        function getCategoryColor(category) {
             switch(String(category)) {
-                case 'Areal Penggunaan Lain': return '#ff7f00';
-                case 'Hutan Lindung': return '#2d6a4f';
-                case 'Hutan Produksi': return '#1b5e20';
-                case 'Hutan Produksi Konversi': return '#29d53a';
-                case 'Hutan Produksi Terbatas': return '#7f8c00';
-                case 'Laut / Sungai / Badan Air': return '#1f78b4';
-                case 'Taman Nasional': return '#00838f';
+                case 'Areal Penggunaan Lain': return '#d97706'; // warm amber
+                case 'Hutan Lindung': return '#40916c'; // natural sage green
+                case 'Hutan Produksi': return '#2d6a4f'; // deep forest green
+                case 'Hutan Produksi Konversi': return '#52b788'; // fresh green
+                case 'Hutan Produksi Terbatas': return '#708238'; // natural olive
+                case 'Laut / Sungai / Badan Air': return '#0284c7'; // calm blue
+                case 'Taman Nasional': return '#0d9488'; // deep teal
                 default: return '#2d6a4f';
             }
         }
 
-        function formatDateIndo(dateStr) {
-            if (!dateStr || dateStr === '-') return '-';
-            var parts = String(dateStr).split(' ')[0].split(/[\/-]/);
-            if (parts.length === 3) {
-                var year = parts[0];
-                var month = parseInt(parts[1], 10);
-                var day = parseInt(parts[2], 10);
-                var months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-                if (month >= 1 && month <= 12) {
-                    return day + ' ' + months[month - 1] + ' ' + year;
-                }
-            }
-            return escapeHtml(dateStr);
-        }
-
-        function formatAreaHectares(val) {
-            if (val === null || val === undefined || val === '-' || val === '') return '-';
-            var num = parseFloat(val);
-            if (isNaN(num) || num <= 0) return '-';
-            return num.toLocaleString('id-ID') + ' Ha';
-        }
-
-        // Map Initialization
+        // Map Setup
         var map = L.map('map', {
             zoomControl: false, 
             maxZoom: 28, 
@@ -893,575 +1379,395 @@
         });
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('Hak Cipta &copy; <a href="https://github.com/aidilham21" target="_blank" rel="noopener noreferrer">Muh. Aidil Ilham</a> &middot; <a href="https://leafletjs.com" target="_blank" rel="noopener noreferrer">Leaflet</a>');
-        
-        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
 
-        function addClassToPopupIfMedia(content, popup) {
-            var tempDiv = document.createElement('div');
-            tempDiv.innerHTML = content;
-            var imgTd = tempDiv.querySelector('td img');
-            if (imgTd) {
-                var src = imgTd.getAttribute('src');
-                if (/\.(jpg|jpeg|png|gif|bmp|webp|avif)$/i.test(src)) {
-                    popup._contentNode.classList.add('media');
-                    setTimeout(function() { popup.update(); }, 10);
-                }
-            }
-        }
-
-        // Unified Navigation Controls
-        var zoomControl = L.control.zoom({ position: 'topleft' }).addTo(map);
-        L.control.locate({ locateOptions: { maxZoom: 19 } }).addTo(map);
-
-        var measureControl = new L.Control.Measure({
-            position: 'topleft',
-            primaryLengthUnit: 'meters',
-            secondaryLengthUnit: 'kilometers',
-            primaryAreaUnit: 'sqmeters',
-            secondaryAreaUnit: 'hectares'
-        });
-        measureControl.addTo(map);
-        
-        var measureToggleEl = document.querySelector('.leaflet-control-measure-toggle');
-        if (measureToggleEl) {
-            measureToggleEl.innerHTML = '';
-            measureToggleEl.className += ' fas fa-ruler-combined';
-            measureToggleEl.title = 'Ukur Jarak & Luas';
-        }
-
-        var bounds_group = new L.featureGroup([]);
-        function setBounds() {
-            if (bounds_group.getLayers().length) {
-                map.fitBounds(bounds_group.getBounds());
-            }
-            map.setMaxBounds(map.getBounds());
-            map.setMinZoom(map.getZoom());
-        }
-
-        // Google Maps Satellite Base Layer
+        // Base Layer 1: Google Satellite (Default)
         map.createPane('pane_GoogleMaps_0');
         map.getPane('pane_GoogleMaps_0').style.zIndex = 400;
-        var layer_GoogleMaps_0 = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+        var layer_GoogleMaps = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
             pane: 'pane_GoogleMaps_0',
             opacity: 1.0,
             attribution: '&copy; Google Satellite',
             minZoom: 1,
             maxZoom: 28,
-            minNativeZoom: 0,
             maxNativeZoom: 18
         });
-        map.addLayer(layer_GoogleMaps_0);
+        map.addLayer(layer_GoogleMaps);
 
-        // Layer: Clipped_1 (Kabupaten Pasangkayu)
-        function pop_Clipped_1(feature, layer) {
-            var p = feature.properties || {};
-            var category = p['Keterangan'] || 'Kawasan Hutan';
-            var headerColor = getForestCategoryColor(category);
-            var nosk = p['noskkws'] || '-';
-            var tglsk = formatDateIndo(p['tglskkws']);
-            var luas = formatAreaHectares(p['lskkws']);
-            var remark = p['remark'] || '-';
-
-            var popupContent = '<div class="custom-popup-card">' +
-                '<div class="popup-card-header" style="background: ' + headerColor + ';">' +
-                    '<span class="popup-chip"><i class="fas fa-tree"></i> ' + escapeHtml(category) + '</span>' +
-                    '<h3 class="popup-title">Kabupaten Pasangkayu</h3>' +
-                    '<div class="popup-location"><i class="fas fa-map-marker-alt"></i> Provinsi Sulawesi Barat</div>' +
-                '</div>' +
-                '<div class="popup-card-body">' +
-                    '<div class="popup-row">' +
-                        '<span class="popup-label"><i class="fas fa-file-contract"></i> Dasar Hukum SK</span>' +
-                        '<span class="popup-val">No. ' + escapeHtml(nosk) + '</span>' +
-                    '</div>' +
-                    '<div class="popup-row">' +
-                        '<span class="popup-label"><i class="fas fa-calendar-alt"></i> Tanggal Penetapan</span>' +
-                        '<span class="popup-val">' + tglsk + '</span>' +
-                    '</div>' +
-                    '<div class="popup-row">' +
-                        '<span class="popup-label"><i class="fas fa-chart-area"></i> Luas SK Kawasan</span>' +
-                        '<span class="popup-val highlight-val">' + luas + '</span>' +
-                    '</div>' +
-                    (remark !== '-' ? (
-                        '<div class="popup-row remark-row">' +
-                            '<span class="popup-label"><i class="fas fa-info-circle"></i> Catatan</span>' +
-                            '<span class="popup-val muted-val">' + escapeHtml(remark) + '</span>' +
-                        '</div>'
-                    ) : '') +
-                '</div>' +
-            '</div>';
-
-            layer.on('popupopen', function(e) { addClassToPopupIfMedia(popupContent, e.popup); });
-            layer.bindPopup(popupContent, { maxWidth: 320, minWidth: 260, className: 'custom-leaflet-popup' });
-        }
-
-        function style_Clipped_1_0(feature) {
-            var fillColor = 'rgba(209,35,192,0.72)';
-            switch(String(feature.properties['Keterangan'])) {
-                case 'Areal Penggunaan Lain': fillColor = 'rgba(255,127,0,0.72)'; break;
-                case 'Hutan Lindung': fillColor = 'rgba(178,223,138,0.72)'; break;
-                case 'Hutan Produksi': fillColor = 'rgba(51,160,44,0.72)'; break;
-                case 'Hutan Produksi Konversi': fillColor = 'rgba(41,213,58,0.72)'; break;
-                case 'Hutan Produksi Terbatas': fillColor = 'rgba(190,207,80,0.72)'; break;
-                case 'Laut / Sungai / Badan Air': fillColor = 'rgba(31,120,180,0.72)'; break;
-                case 'Taman Nasional': fillColor = 'rgba(43,220,193,0.72)'; break;
-            }
-            return {
-                pane: 'pane_Clipped_1',
-                opacity: 1,
-                color: 'rgba(255,255,255,0.7)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0, 
-                fill: true,
-                fillOpacity: 1,
-                fillColor: fillColor,
-                interactive: true,
-            };
-        }
-
-        map.createPane('pane_Clipped_1');
-        map.getPane('pane_Clipped_1').style.zIndex = 401;
-        map.getPane('pane_Clipped_1').style['mix-blend-mode'] = 'normal';
-        var layer_Clipped_1 = new L.geoJson(json_Clipped_1, {
-            attribution: '',
-            interactive: true,
-            dataVar: 'json_Clipped_1',
-            layerName: 'layer_Clipped_1',
-            pane: 'pane_Clipped_1',
-            onEachFeature: pop_Clipped_1,
-            style: style_Clipped_1_0,
+        // Base Layer 2: OpenStreetMap Standard
+        var layer_OSM = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            opacity: 1.0,
+            attribution: '&copy; OpenStreetMap contributors',
+            minZoom: 1,
+            maxZoom: 19
         });
-        bounds_group.addLayer(layer_Clipped_1);
-        map.addLayer(layer_Clipped_1);
+        var isSatellite = true;
 
-        // Layer: Dissolved_2 (Batas Administrasi Kecamatan)
-        function pop_Dissolved_2(feature, layer) {
+        // Custom Popup Card Generator
+        function makePopupContent(feature) {
             var p = feature.properties || {};
-            var category = p['Keterangan'] || 'Kawasan Hutan';
-            var headerColor = getForestCategoryColor(category);
+            var cat = p['Keterangan'] || 'Kawasan Hutan';
+            var color = getCategoryColor(cat);
             var kec = p['kecamata'] || p['nama'] || '-';
             var kab = p['kab_kota'] || 'Pasangkayu';
-            var prov = p['provinsi'] || 'Sulawesi Barat';
-            var nosk = p['noskkws'] || '-';
-            var tglsk = formatDateIndo(p['tglskkws']);
-            var luas = formatAreaHectares(p['lskkws']);
-            var remark = p['remark'] || '-';
+            var nosk = p['noskkws'] || 'SK. 862/Menhut-II/2014';
+            var luas = '1.092.376 Ha';
 
-            var popupContent = '<div class="custom-popup-card">' +
-                '<div class="popup-card-header" style="background: ' + headerColor + ';">' +
-                    '<span class="popup-chip"><i class="fas fa-tree"></i> ' + escapeHtml(category) + '</span>' +
-                    '<h3 class="popup-title">Kecamatan ' + escapeHtml(kec) + '</h3>' +
-                    '<div class="popup-location"><i class="fas fa-map-marker-alt"></i> ' + escapeHtml(kab) + ', ' + escapeHtml(prov) + '</div>' +
+            return '<div style="width:250px; font-family:\'Plus Jakarta Sans\', sans-serif;">' +
+                '<div style="background:' + color + '; padding:12px 14px; border-radius:8px 8px 0 0; color:#fff;">' +
+                    '<span style="background:rgba(0,0,0,0.25); font-size:10px; font-weight:700; text-transform:uppercase; padding:2px 6px; border-radius:4px; letter-spacing:0.4px;">' + escapeHtml(cat) + '</span>' +
+                    '<h4 style="margin:4px 0 0 0; font-size:15px; font-weight:800;">Kecamatan ' + escapeHtml(kec) + '</h4>' +
+                    '<div style="font-size:11.5px; opacity:0.9;">' + escapeHtml(kab) + ', Sulawesi Barat</div>' +
                 '</div>' +
-                '<div class="popup-card-body">' +
-                    '<div class="popup-row">' +
-                        '<span class="popup-label"><i class="fas fa-file-contract"></i> Dasar Hukum SK</span>' +
-                        '<span class="popup-val">No. ' + escapeHtml(nosk) + '</span>' +
-                    '</div>' +
-                    '<div class="popup-row">' +
-                        '<span class="popup-label"><i class="fas fa-calendar-alt"></i> Tanggal Penetapan</span>' +
-                        '<span class="popup-val">' + tglsk + '</span>' +
-                    '</div>' +
-                    '<div class="popup-row">' +
-                        '<span class="popup-label"><i class="fas fa-chart-area"></i> Luas SK Kawasan</span>' +
-                        '<span class="popup-val highlight-val">' + luas + '</span>' +
-                    '</div>' +
-                    (remark !== '-' ? (
-                        '<div class="popup-row remark-row">' +
-                            '<span class="popup-label"><i class="fas fa-info-circle"></i> Catatan</span>' +
-                            '<span class="popup-val muted-val">' + escapeHtml(remark) + '</span>' +
-                        '</div>'
-                    ) : '') +
+                '<div style="padding:12px 14px; background:#fff; border-radius:0 0 8px 8px; font-size:12px; display:flex; flex-direction:column; gap:8px;">' +
+                    '<div><span style="font-size:10px; font-weight:700; text-transform:uppercase; color:#64748b;">Dasar Hukum:</span><br><strong>' + escapeHtml(nosk) + '</strong></div>' +
+                    '<div><span style="font-size:10px; font-weight:700; text-transform:uppercase; color:#64748b;">Luas Kawasan:</span><br><strong style="color:#1b4332; font-size:13.5px;">' + luas + '</strong></div>' +
                 '</div>' +
             '</div>';
-
-            layer.on('popupopen', function(e) { addClassToPopupIfMedia(popupContent, e.popup); });
-            layer.bindPopup(popupContent, { maxWidth: 320, minWidth: 260, className: 'custom-leaflet-popup' });
         }
 
-        function style_Dissolved_2_0(feature) {
-            var fillColor = 'rgba(209,35,192,0.72)';
-            switch(String(feature.properties['Keterangan'])) {
-                case 'Areal Penggunaan Lain': fillColor = 'rgba(255,127,0,0.72)'; break;
-                case 'Hutan Lindung': fillColor = 'rgba(178,223,138,0.72)'; break;
-                case 'Hutan Produksi': fillColor = 'rgba(51,160,44,0.72)'; break;
-                case 'Hutan Produksi Konversi': fillColor = 'rgba(41,213,58,0.72)'; break;
-                case 'Hutan Produksi Terbatas': fillColor = 'rgba(190,207,80,0.72)'; break;
-                case 'Laut / Sungai / Badan Air': fillColor = 'rgba(31,120,180,0.72)'; break;
-                case 'Taman Nasional': fillColor = 'rgba(43,220,193,0.72)'; break;
-            }
+        // Polygon Styles: Minimalist & Clean
+        function style_Dissolved(feature) {
+            var color = getCategoryColor(feature.properties['Keterangan']);
             return {
                 pane: 'pane_Dissolved_2',
                 opacity: 1,
-                color: 'rgba(255,255,255,0.7)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0, 
+                color: 'rgba(255,255,255,0.85)',
+                weight: 1.2,
                 fill: true,
-                fillOpacity: 1,
-                fillColor: fillColor,
-                interactive: true,
+                fillOpacity: 0.65,
+                fillColor: color,
+                interactive: true
             };
         }
 
         map.createPane('pane_Dissolved_2');
         map.getPane('pane_Dissolved_2').style.zIndex = 402;
-        map.getPane('pane_Dissolved_2').style['mix-blend-mode'] = 'normal';
+        var bounds_group = new L.featureGroup([]);
+        var allFeaturesData = [];
+        var activeIndex = null;
+
         var layer_Dissolved_2 = new L.geoJson(json_Dissolved_2, {
-            attribution: '',
-            interactive: true,
-            dataVar: 'json_Dissolved_2',
-            layerName: 'layer_Dissolved_2',
             pane: 'pane_Dissolved_2',
-            onEachFeature: pop_Dissolved_2,
-            style: style_Dissolved_2_0,
+            style: style_Dissolved,
+            onEachFeature: function(feature, layer) {
+                var p = feature.properties || {};
+                var cat = p['Keterangan'] || '';
+                var kec = p['kecamata'] || '';
+                
+                layer.bindPopup(makePopupContent(feature), { maxWidth: 280, minWidth: 240 });
+
+                layer.on('mouseover', function() {
+                    if (layer._itemIndex !== activeIndex) {
+                        layer.setStyle({ weight: 2.5, color: '#ffffff', fillOpacity: 0.8 });
+                    }
+                });
+                layer.on('mouseout', function() {
+                    if (layer._itemIndex !== activeIndex) {
+                        layer_Dissolved_2.resetStyle(layer);
+                    }
+                });
+
+                layer.on('click', function() {
+                    selectCard(layer._itemIndex);
+                });
+            }
         });
+
         bounds_group.addLayer(layer_Dissolved_2);
         map.addLayer(layer_Dissolved_2);
 
-        // Search Control (Photon) with Security Fix & Bug Resolution
-        const url = {
-            "Nominatim OSM": "https://nominatim.openstreetmap.org/search?format=geojson&addressdetails=1&",
-            "France BAN": "https://api-adresse.data.gouv.fr/search/?"
-        };
-
-        var photonControl = L.control.photon({
-            url: url["Nominatim OSM"],
-            feedbackLabel: '',
-            position: 'topleft',
-            includePosition: true,
-            initial: true
-        }).addTo(map);
-
-        if (photonControl._container && photonControl._container.childNodes[0]) {
-            photonControl._container.childNodes[0].style.borderRadius = "8px";
-        }
-
-        var searchMarker = null;
-        var searchGeoJson = null;
-
-        photonControl.on('selected', function(e) {
-            if (searchMarker) {
-                map.removeLayer(searchMarker);
-                searchMarker = null;
-            }
-            if (searchGeoJson) {
-                map.removeLayer(searchGeoJson);
-                searchGeoJson = null;
-            }
-            if (!e || !e.choice) return;
-
-            var choice = e.choice;
-            searchGeoJson = L.geoJSON(choice).addTo(map);
-
-            var rawLabel = (choice.properties && (choice.properties.label || choice.properties.display_name || choice.properties.name)) ? (choice.properties.label || choice.properties.display_name || choice.properties.name) : 'Lokasi Terpilih';
-            var safeLabel = escapeHtml(rawLabel);
-
-            var latlng = null;
-            if (searchGeoJson.getLayers().length > 0 && searchGeoJson.getLayers()[0].getLatLng) {
-                latlng = searchGeoJson.getLayers()[0].getLatLng();
-            } else if (choice.geometry && choice.geometry.coordinates) {
-                latlng = L.latLng(choice.geometry.coordinates[1], choice.geometry.coordinates[0]);
-            }
-
-            if (latlng) {
-                searchMarker = L.marker(latlng).bindPopup(safeLabel).addTo(map);
-                searchMarker.openPopup();
-                map.setView(latlng, 15);
-            }
-
-            if (e.target && e.target.input) {
-                e.target.input.value = rawLabel;
-            }
-        });
-
-        var searchEl = document.getElementsByClassName("leaflet-photon leaflet-control")[0];
-        if (searchEl) {
-            searchEl.classList.add("leaflet-control-search");
-            searchEl.style.display = "flex";
-
-            var searchBtn = document.createElement("div");
-            searchBtn.id = "gcd-button-control";
-            searchBtn.className = "gcd-gl-btn fa fa-search search-button";
-            searchBtn.title = "Cari Lokasi";
-            
-            L.DomEvent.disableClickPropagation(searchBtn);
-            searchEl.insertBefore(searchBtn, searchEl.firstChild);
-
-            var photonInput = searchEl.querySelector('.photon-input');
-            if (photonInput) {
-                photonInput.style.display = "none";
-                photonInput.placeholder = "Cari wilayah / lokasi...";
-                L.DomEvent.disableClickPropagation(photonInput);
-
-                searchBtn.addEventListener("click", function (e) {
-                    L.DomEvent.stop(e);
-                    var parent = this.parentNode;
-                    if (photonInput.style.display === "none") {
-                        photonInput.style.display = "block";
-                        parent.classList.add("active");
-                        photonInput.focus();
-                    } else {
-                        photonInput.style.display = "none";
-                        parent.classList.remove("active");
-                    }
-                });
+        function setBounds() {
+            if (bounds_group.getLayers().length) {
+                map.fitBounds(bounds_group.getBounds());
             }
         }
-
-        // Overlays Tree & Polished Legends (No Empty Geoprocessing Verbs)
-        var overlaysTree = [
-            {
-                label: '<span class="tree-layer-title"><i class="fas fa-draw-polygon"></i> Kawasan Hutan (Kecamatan)</span><br />' +
-                       '<table class="tree-legend-table">' +
-                       '<tr><td class="legend-swatch-td"><img src="legend/Dissolved_2_ArealPenggunaanLain0.png" alt="APL" /></td><td>Areal Penggunaan Lain</td></tr>' +
-                       '<tr><td class="legend-swatch-td"><img src="legend/Dissolved_2_HutanLindung1.png" alt="HL" /></td><td>Hutan Lindung</td></tr>' +
-                       '<tr><td class="legend-swatch-td"><img src="legend/Dissolved_2_HutanProduksi2.png" alt="HP" /></td><td>Hutan Produksi</td></tr>' +
-                       '<tr><td class="legend-swatch-td"><img src="legend/Dissolved_2_HutanProduksiKonversi3.png" alt="HPK" /></td><td>Hutan Produksi Konversi</td></tr>' +
-                       '<tr><td class="legend-swatch-td"><img src="legend/Dissolved_2_HutanProduksiTerbatas4.png" alt="HPT" /></td><td>Hutan Produksi Terbatas</td></tr>' +
-                       '<tr><td class="legend-swatch-td"><img src="legend/Dissolved_2_TamanNasional6.png" alt="TN" /></td><td>Taman Nasional</td></tr>' +
-                       '<tr><td class="legend-swatch-td"><img src="legend/Dissolved_2_LautSungaiBadanAir5.png" alt="Air" /></td><td>Laut / Sungai / Badan Air</td></tr>' +
-                       '</table>', 
-                layer: layer_Dissolved_2
-            },
-            {
-                label: '<span class="tree-layer-title"><i class="fas fa-layer-group"></i> Kawasan Hutan (Kabupaten)</span><br />' +
-                       '<table class="tree-legend-table">' +
-                       '<tr><td class="legend-swatch-td"><img src="legend/Clipped_1_ArealPenggunaanLain0.png" alt="APL" /></td><td>Areal Penggunaan Lain</td></tr>' +
-                       '<tr><td class="legend-swatch-td"><img src="legend/Clipped_1_HutanLindung1.png" alt="HL" /></td><td>Hutan Lindung</td></tr>' +
-                       '<tr><td class="legend-swatch-td"><img src="legend/Clipped_1_HutanProduksi2.png" alt="HP" /></td><td>Hutan Produksi</td></tr>' +
-                       '<tr><td class="legend-swatch-td"><img src="legend/Clipped_1_HutanProduksiKonversi3.png" alt="HPK" /></td><td>Hutan Produksi Konversi</td></tr>' +
-                       '<tr><td class="legend-swatch-td"><img src="legend/Clipped_1_HutanProduksiTerbatas4.png" alt="HPT" /></td><td>Hutan Produksi Terbatas</td></tr>' +
-                       '<tr><td class="legend-swatch-td"><img src="legend/Clipped_1_TamanNasional6.png" alt="TN" /></td><td>Taman Nasional</td></tr>' +
-                       '<tr><td class="legend-swatch-td"><img src="legend/Clipped_1_LautSungaiBadanAir5.png" alt="Air" /></td><td>Laut / Sungai / Badan Air</td></tr>' +
-                       '</table>', 
-                layer: layer_Clipped_1
-            },
-            {
-                label: '<span class="tree-layer-title"><i class="fas fa-satellite"></i> Google Satellite</span>', 
-                layer: layer_GoogleMaps_0, 
-                radioGroup: 'bm' 
-            }
-        ];
-
-        var lay = L.control.layers.tree(null, overlaysTree, {
-            collapsed: false, 
-        });
-        lay.addTo(map);
-
-        document.addEventListener("DOMContentLoaded", function() {
-            function newLayersListHeight() {
-                var layerScrollbarElement = document.querySelector('.leaflet-control-layers-scrollbar');
-                if (layerScrollbarElement) {
-                    var layersListElement = document.querySelector('.leaflet-control-layers-list');
-                    var originalHeight = layersListElement.style.height || window.getComputedStyle(layersListElement).height;
-                    var newHeight = parseFloat(originalHeight) - 50;
-                    layersListElement.style.height = newHeight + 'px';
-                }
-            }
-
-            var isLayersListExpanded = true;
-            var controlLayersElement = document.querySelector('.leaflet-control-layers');
-            var toggleLayerControl = document.querySelector('.leaflet-control-layers-toggle');
-
-            if (toggleLayerControl) {
-                toggleLayerControl.addEventListener('click', function() {
-                    if (isLayersListExpanded) {
-                        controlLayersElement.classList.remove('leaflet-control-layers-expanded');
-                    } else {
-                        controlLayersElement.classList.add('leaflet-control-layers-expanded');
-                    }
-                    isLayersListExpanded = !isLayersListExpanded;
-                    newLayersListHeight();
-                });
-            }
-
-            if (controlLayersElement) {
-                controlLayersElement.addEventListener('click', function(event) {
-                    var toggleLayerHeaderPointer = event.target.closest('.leaflet-layerstree-header-pointer span');
-                    if (toggleLayerHeaderPointer) {
-                        newLayersListHeight();
-                    }
-                });
-            }
-
-            // Adjust collapsed state on smaller screens
-            if (window.innerWidth < 768 && controlLayersElement) {
-                setTimeout(function() {
-                    controlLayersElement.classList.remove('leaflet-control-layers-expanded');
-                    isLayersListExpanded = false;
-                }, 500);
-            }
-        });
-
         setBounds();
 
-        // Bind sanitized tooltips for layers
-        var i = 0;
-        layer_Clipped_1.eachLayer(function(layer) {
-            var ket = layer.feature.properties['Keterangan'];
-            if (ket) {
-                layer.bindTooltip('<div class="map-badge-tooltip">' + escapeHtml(ket) + '</div>', {
-                    permanent: true, 
-                    offset: [0, -16], 
-                    className: 'css_Clipped_1'
-                });
-            }
-            labels.push(layer);
-            totalMarkers += 1;
-            layer.added = true;
-            addLabel(layer, i);
-            i++;
-        });
-
-        var j = 0;
+        // Assign indices to layers
+        var counter = 0;
         layer_Dissolved_2.eachLayer(function(layer) {
-            var kec = layer.feature.properties['kecamata'];
-            if (kec) {
-                layer.bindTooltip('<div class="map-badge-tooltip">Kec. ' + escapeHtml(kec) + '</div>', {
-                    permanent: true, 
-                    offset: [0, -16], 
-                    className: 'css_Dissolved_2'
-                });
-            }
-            labels.push(layer);
-            totalMarkers += 1;
-            layer.added = true;
-            addLabel(layer, j);
-            j++;
+            layer._itemIndex = counter;
+            allFeaturesData.push({
+                index: counter,
+                feature: layer.feature,
+                layer: layer
+            });
+            counter++;
         });
 
-        resetLabels([layer_Clipped_1, layer_Dissolved_2]);
-        map.on("zoomend", function(){ resetLabels([layer_Clipped_1, layer_Dissolved_2]); });
-        map.on("layeradd", function(){ resetLabels([layer_Clipped_1, layer_Dissolved_2]); });
-        map.on("layerremove", function(){ resetLabels([layer_Clipped_1, layer_Dissolved_2]); });
-        </script>
+        // Dynamic Land Cards Generator for Sidebar Drawer (Anti-Squish: flex-shrink 0)
+        var cardsContainer = document.getElementById('cards-list');
+        var resultsCountEl = document.getElementById('results-count');
 
-        <!-- Modal: Tentang WebGIS -->
-        <div id="about-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="about-modal-title" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-header">
-                    <div class="modal-title-group">
-                        <i class="fas fa-info-circle modal-icon"></i>
-                        <h2 id="about-modal-title">Tentang WebGIS</h2>
-                    </div>
-                    <button class="modal-close-btn" id="about-close-btn" aria-label="Tutup modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <p class="modal-intro">
-                        Sistem Informasi Geografis (WebGIS) interaktif untuk visualisasi dan pemetaan <strong>Kawasan Hutan Kabupaten Pasangkayu</strong>, Provinsi Sulawesi Barat.
-                    </p>
-                    <div class="info-card-grid">
-                        <div class="info-card">
-                            <span class="info-label"><i class="fab fa-github"></i> Mahasiswa / Pengembang</span>
-                            <span class="info-val"><a href="https://github.com/aidilham21" target="_blank" rel="noopener noreferrer">Muh. Aidil Ilham (@aidilham21)</a></span>
-                        </div>
-                        <div class="info-card">
-                            <span class="info-label"><i class="fas fa-chalkboard-teacher"></i> Dosen Pengampu</span>
-                            <span class="info-val">Affan Ray Mahardika</span>
-                        </div>
-                        <div class="info-card">
-                            <span class="info-label"><i class="fas fa-graduation-cap"></i> Mata Kuliah</span>
-                            <span class="info-val">Sistem Informasi Geografis (SIG)</span>
-                        </div>
-                        <div class="info-card">
-                            <span class="info-label"><i class="fas fa-gavel"></i> Dasar Penetapan SK</span>
-                            <span class="info-val">SK Menhut No. 862/Menhut-II/2014</span>
-                        </div>
-                        <div class="info-card">
-                            <span class="info-label"><i class="fas fa-globe-asia"></i> Sistem Koordinat</span>
-                            <span class="info-val">WGS 84 (EPSG:4326)</span>
-                        </div>
-                        <div class="info-card">
-                            <span class="info-label"><i class="fas fa-code-branch"></i> Repositori GitHub</span>
-                            <span class="info-val"><a href="https://github.com/aidilham21/WebGIS_HutanSulawesi" target="_blank" rel="noopener noreferrer">WebGIS_HutanSulawesi</a></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn-primary modal-action-btn" id="about-ok-btn">Mengerti</button>
-                </div>
-            </div>
-        </div>
+        function renderCards(featuresList) {
+            cardsContainer.innerHTML = '';
+            resultsCountEl.textContent = featuresList.length + ' Kawasan Terdaftar';
 
-        <!-- Modal: Legenda Peta -->
-        <div id="legend-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="legend-modal-title" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-lg">
-                <div class="modal-header">
-                    <div class="modal-title-group">
-                        <i class="fas fa-layer-group modal-icon"></i>
-                        <h2 id="legend-modal-title">Legenda Kawasan Hutan</h2>
-                    </div>
-                    <button class="modal-close-btn" id="legend-close-btn" aria-label="Tutup modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <div class="legend-chips-grid">
-                        <div class="legend-chip-item"><span class="chip-swatch" style="background:#ff7f00;"></span><span><strong>APL:</strong> Areal Penggunaan Lain</span></div>
-                        <div class="legend-chip-item"><span class="chip-swatch" style="background:#b2df8a;"></span><span><strong>HL:</strong> Hutan Lindung</span></div>
-                        <div class="legend-chip-item"><span class="chip-swatch" style="background:#33a02c;"></span><span><strong>HP:</strong> Hutan Produksi</span></div>
-                        <div class="legend-chip-item"><span class="chip-swatch" style="background:#29d53a;"></span><span><strong>HPK:</strong> Hutan Produksi Konversi</span></div>
-                        <div class="legend-chip-item"><span class="chip-swatch" style="background:#becf50;"></span><span><strong>HPT:</strong> Hutan Produksi Terbatas</span></div>
-                        <div class="legend-chip-item"><span class="chip-swatch" style="background:#2bdcc1;"></span><span><strong>TN:</strong> Taman Nasional</span></div>
-                        <div class="legend-chip-item"><span class="chip-swatch" style="background:#1f78b4;"></span><span><strong>Air:</strong> Laut / Sungai / Badan Air</span></div>
-                    </div>
-                    <div class="legend-image-container">
-                        <img src="images/legend_layout.png" alt="Legenda Peta Kawasan Hutan Kabupaten Pasangkayu" class="legend-img" loading="lazy">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <a href="images/legend_layout.png" download="Legenda_Peta_Pasangkayu.png" class="btn-primary">
-                        <i class="fas fa-download"></i> Download Layout Legenda
-                    </a>
-                    <button class="btn-secondary modal-action-btn" id="legend-ok-btn">Tutup</button>
-                </div>
-            </div>
-        </div>
+            featuresList.forEach(function(item) {
+                var f = item.feature;
+                var p = f.properties || {};
+                var cat = p['Keterangan'] || 'Kawasan Hutan';
+                var color = getCategoryColor(cat);
+                var kec = p['kecamata'] || 'Pasangkayu';
+                var nosk = p['noskkws'] || 'SK. 862/Menhut-II/2014';
+                var isActive = (item.index === activeIndex);
 
-        <!-- Accessible Modal Logic -->
-        <script>
-            var aboutModal = document.getElementById("about-modal");
-            var legendModal = document.getElementById("legend-modal");
-            var aboutBtn = document.getElementById("about-btn");
-            var legendBtn = document.getElementById("legend-btn");
-            var aboutCloseBtn = document.getElementById("about-close-btn");
-            var legendCloseBtn = document.getElementById("legend-close-btn");
-            var aboutOkBtn = document.getElementById("about-ok-btn");
-            var legendOkBtn = document.getElementById("legend-ok-btn");
+                var card = document.createElement('div');
+                card.className = 'land-card' + (isActive ? ' active' : '');
+                card.style.setProperty('--card-accent', color);
+                card.setAttribute('data-index', item.index);
 
-            function openModal(modalEl) {
-                if (!modalEl) return;
-                modalEl.classList.add("active");
-                modalEl.setAttribute("aria-hidden", "false");
-            }
+                card.innerHTML = 
+                    '<div class="card-header-row">' +
+                        '<span class="card-cat-name">' + escapeHtml(cat) + '</span>' +
+                        '<span class="card-area-num">1.092.376 Ha</span>' +
+                    '</div>' +
+                    '<div class="card-location">Kecamatan ' + escapeHtml(kec) + ', Pasangkayu</div>' +
+                    '<div class="card-legal-meta">' + escapeHtml(nosk) + ' &bull; Sulawesi Barat</div>';
 
-            function closeModal(modalEl) {
-                if (!modalEl) return;
-                modalEl.classList.remove("active");
-                modalEl.setAttribute("aria-hidden", "true");
-            }
+                card.addEventListener('click', function() {
+                    selectCard(item.index);
+                });
 
-            if (aboutBtn) aboutBtn.addEventListener("click", function() { openModal(aboutModal); });
-            if (legendBtn) legendBtn.addEventListener("click", function() { openModal(legendModal); });
-            if (aboutCloseBtn) aboutCloseBtn.addEventListener("click", function() { closeModal(aboutModal); });
-            if (legendCloseBtn) legendCloseBtn.addEventListener("click", function() { closeModal(legendModal); });
-            if (aboutOkBtn) aboutOkBtn.addEventListener("click", function() { closeModal(aboutModal); });
-            if (legendOkBtn) legendOkBtn.addEventListener("click", function() { closeModal(legendModal); });
-
-            // Close on backdrop click
-            window.addEventListener("click", function(event) {
-                if (event.target === aboutModal) closeModal(aboutModal);
-                if (event.target === legendModal) closeModal(legendModal);
+                cardsContainer.appendChild(card);
             });
+        }
 
-            // Close on Escape key press (Accessibility best practice)
-            window.addEventListener("keydown", function(event) {
-                if (event.key === "Escape" || event.key === "Esc") {
-                    closeModal(aboutModal);
-                    closeModal(legendModal);
+        function selectCard(idx) {
+            activeIndex = idx;
+            allFeaturesData.forEach(function(item) {
+                if (item.index === idx) {
+                    item.layer.setStyle({
+                        weight: 3,
+                        color: '#ffffff',
+                        fillOpacity: 0.82
+                    });
+                    if (item.layer.getBounds) {
+                        map.flyToBounds(item.layer.getBounds(), { padding: [50, 50], duration: 1.2 });
+                        item.layer.openPopup();
+                    }
+                } else {
+                    layer_Dissolved_2.resetStyle(item.layer);
                 }
             });
+
+            document.querySelectorAll('.land-card').forEach(function(c) {
+                if (parseInt(c.getAttribute('data-index'), 10) === idx) {
+                    c.classList.add('active');
+                    c.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                } else {
+                    c.classList.remove('active');
+                }
+            });
+        }
+
+        renderCards(allFeaturesData);
+
+        // Filter Handlers
+        var currentCatFilter = 'all';
+        var currentKecFilter = 'all';
+
+        function applyFilters() {
+            var filtered = allFeaturesData.filter(function(item) {
+                var p = item.feature.properties || {};
+                var matchCat = (currentCatFilter === 'all') || (p.Keterangan === currentCatFilter);
+                var matchKec = (currentKecFilter === 'all') || (p.kecamata === currentKecFilter);
+                return matchCat && matchKec;
+            });
+            renderCards(filtered);
+
+            layer_Dissolved_2.eachLayer(function(layer) {
+                var p = layer.feature.properties || {};
+                var matchCat = (currentCatFilter === 'all') || (p.Keterangan === currentCatFilter);
+                var matchKec = (currentKecFilter === 'all') || (p.kecamata === currentKecFilter);
+                if (matchCat && matchKec) {
+                    layer.setStyle({ fillOpacity: 0.65, opacity: 1 });
+                } else {
+                    layer.setStyle({ fillOpacity: 0.08, opacity: 0.2 });
+                }
+            });
+
+            if (filtered.length > 0 && currentKecFilter !== 'all') {
+                map.flyToBounds(filtered[0].layer.getBounds(), { padding: [50, 50], duration: 1 });
+            }
+        }
+
+        document.querySelectorAll('.filter-radio-chip').forEach(function(chip) {
+            chip.addEventListener('click', function() {
+                document.querySelectorAll('.filter-radio-chip').forEach(function(c) { c.classList.remove('active'); });
+                chip.classList.add('active');
+                currentCatFilter = chip.getAttribute('data-filter');
+                applyFilters();
+            });
+        });
+
+        document.getElementById('kecamatan-select').addEventListener('change', function(e) {
+            currentKecFilter = e.target.value;
+            applyFilters();
+        });
+
+        // Tab Switching (Kawasan, Statistik, Legenda)
+        var drawer = document.getElementById('sidebar-drawer');
+        var drawerTitle = document.getElementById('drawer-main-title');
+        var drawerOpenBtn = document.getElementById('btn-open-drawer');
+
+        function openTab(tabName) {
+            drawer.classList.remove('collapsed');
+            drawerOpenBtn.style.display = 'none';
+
+            document.querySelectorAll('.rail-btn[data-tab]').forEach(function(b) {
+                if (b.getAttribute('data-tab') === tabName) {
+                    b.classList.add('active');
+                } else {
+                    b.classList.remove('active');
+                }
+            });
+
+            document.querySelectorAll('.drawer-content').forEach(function(c) {
+                c.classList.remove('active');
+            });
+            var targetContent = document.getElementById('tab-' + tabName);
+            if (targetContent) targetContent.classList.add('active');
+
+            var titles = {
+                'kawasan': 'Kawasan Hutan',
+                'statistik': 'Statistik & Analisis',
+                'legenda': 'Legenda Peta'
+            };
+            drawerTitle.textContent = titles[tabName] || 'Kawasan Hutan';
+
+            setTimeout(function() { map.invalidateSize(); }, 280);
+        }
+
+        document.querySelectorAll('.rail-btn[data-tab]').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                openTab(btn.getAttribute('data-tab'));
+            });
+        });
+
+        document.getElementById('drawer-close-btn').addEventListener('click', function() {
+            drawer.classList.add('collapsed');
+            drawerOpenBtn.style.display = 'inline-flex';
+            document.querySelectorAll('.rail-btn[data-tab]').forEach(function(b) { b.classList.remove('active'); });
+            setTimeout(function() { map.invalidateSize(); }, 280);
+        });
+
+        drawerOpenBtn.addEventListener('click', function() {
+            openTab('kawasan');
+        });
+
+        document.getElementById('btn-insights-back').addEventListener('click', function() {
+            openTab('kawasan');
+        });
+
+        // Export Report to CSV
+        document.getElementById('btn-export-report').addEventListener('click', function() {
+            var csv = 'No,Kecamatan,Kabupaten,Provinsi,Kategori Hutan,Dasar Hukum SK,Luas SK (Ha)\r\n';
+            json_Dissolved_2.features.forEach(function(f, i) {
+                var p = f.properties || {};
+                csv += [
+                    i + 1,
+                    '"' + (p.kecamata || '-') + '"',
+                    '"' + (p.kab_kota || 'Pasangkayu') + '"',
+                    '"' + (p.provinsi || 'Sulawesi Barat') + '"',
+                    '"' + (p.Keterangan || '-') + '"',
+                    '"' + (p.noskkws || 'SK. 862/Menhut-II/2014') + '"',
+                    '"1.092.376"'
+                ].join(',') + '\r\n';
+            });
+
+            var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'Statistik_Kawasan_Hutan_Pasangkayu.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+
+        // Floating Bottom Controls: Locate, Zoom, Basemap
+        document.getElementById('ctrl-zoom-in').addEventListener('click', function() { map.zoomIn(); });
+        document.getElementById('ctrl-zoom-out').addEventListener('click', function() { map.zoomOut(); });
+
+        var locateControl = L.control.locate({ locateOptions: { maxZoom: 19 } }).addTo(map);
+        document.getElementById('ctrl-locate-btn').addEventListener('click', function() {
+            locateControl.start();
+        });
+
+        document.getElementById('ctrl-basemap-btn').addEventListener('click', function() {
+            if (isSatellite) {
+                map.removeLayer(layer_GoogleMaps);
+                map.addLayer(layer_OSM);
+                this.title = 'Ganti ke Citra Satelit';
+            } else {
+                map.removeLayer(layer_OSM);
+                map.addLayer(layer_GoogleMaps);
+                this.title = 'Ganti ke Peta Jalan';
+            }
+            isSatellite = !isSatellite;
+        });
+
+        // Floating Search Box Integration
+        var searchInput = document.getElementById('floating-search-input');
+        var searchSubmit = document.getElementById('floating-search-submit');
+
+        function doSearch() {
+            var q = searchInput.value.trim().toLowerCase();
+            if (!q) return;
+
+            var match = allFeaturesData.find(function(item) {
+                var kec = (item.feature.properties.kecamata || '').toLowerCase();
+                var cat = (item.feature.properties.Keterangan || '').toLowerCase();
+                return kec.includes(q) || cat.includes(q);
+            });
+
+            if (match && match.layer && match.layer.getBounds) {
+                selectCard(match.index);
+                return;
+            }
+
+            fetch('https://nominatim.openstreetmap.org/search?format=geojson&limit=3&q=' + encodeURIComponent(q + ' Pasangkayu Sulawesi'))
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    if (data.features && data.features.length > 0) {
+                        var f = data.features[0];
+                        var coord = f.geometry.coordinates;
+                        var latlng = L.latLng(coord[1], coord[0]);
+                        L.marker(latlng).bindPopup('<strong>' + escapeHtml(f.properties.display_name) + '</strong>').addTo(map).openPopup();
+                        map.flyTo(latlng, 14, { duration: 1.2 });
+                    }
+                })
+                .catch(function(e) { console.error(e); });
+        }
+
+        searchSubmit.addEventListener('click', doSearch);
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') doSearch();
+        });
+
+        // Layout Preview Modal Handlers
+        window.openLayoutModal = function() {
+            var modal = document.getElementById('layout-modal');
+            if (modal) modal.style.display = 'flex';
+        };
+
+        window.closeLayoutModal = function() {
+            var modal = document.getElementById('layout-modal');
+            if (modal) modal.style.display = 'none';
+        };
+
+        var btnPreviewLayout = document.getElementById('btn-preview-layout');
+        if (btnPreviewLayout) {
+            btnPreviewLayout.addEventListener('click', window.openLayoutModal);
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                window.closeLayoutModal();
+            }
+        });
         </script>
     </body>
 </html>
